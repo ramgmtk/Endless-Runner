@@ -6,7 +6,7 @@ class Game extends Phaser.Scene {
 
     preload () {
         // dummy asset
-        this.load.image('foo', './assets/foo.png')
+        this.picture = this.load.image('foo', './assets/foo.png')
     }
 
     create () {
@@ -15,7 +15,12 @@ class Game extends Phaser.Scene {
         downKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
 
         // creating player object
-        this.player = new Player(this, 0, game.config.height - game.config.height/6 - 16, 'foo').setOrigin(0);
+        //fetching image size from cache
+        //credit to user rich: https://www.html5gamedevs.com/topic/36286-get-image-from-cache/
+        this.playerSpriteInfo = game.textures.get('foo');
+        this.playerSpriteInfo = this.playerSpriteInfo.getSourceImage();
+        console.log(this.playerSpriteInfo.height);
+        this.player = new Player(this, 0, game.config.height - laneSize/2 - this.playerSpriteInfo.height/2, 'foo').setOrigin(0);
     }
 
     update () {
