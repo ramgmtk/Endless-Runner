@@ -6,9 +6,9 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     update() {
-        if (Phaser.Input.Keyboard.JustDown(upKey) && this.y > laneSize - this.height) {
+        if (Phaser.Input.Keyboard.JustDown(upKey) && this.y > laneSize) {
             this.y -= game.config.height/3;
-        } else if (Phaser.Input.Keyboard.JustDown(downKey) && this.y < game.config.height -  laneSize/2 - this.scene.playerSpriteInfo.height/2) { 
+        } else if (Phaser.Input.Keyboard.JustDown(downKey) && this.y < game.config.height -  laneSize/2) { 
             this.y += game.config.height/3;
         }
     }
