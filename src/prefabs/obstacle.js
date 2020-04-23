@@ -5,6 +5,7 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite {
         scene.physics.add.existing(this);
 
         this.setVelocityX(velocity);
+        this.setImmovable(true);
     }
 
     update () {

@@ -19,10 +19,13 @@ class Game extends Phaser.Scene {
         this.bottomSpawnY = game.config.height - laneSize/2;
         this.middleSpawnY = game.config.height/2;
         this.topSpawnY = laneSize/2;
+        //difficulty adjustment
+        //delayed functions calls will call whichever corresponding difficulty
+        //enemy spawned is req'd.
         this.difficultyTable = {
             '1': this.generateObstacles,
         }
-        this.difficultyLevel = 1;
+        this.difficultyLevel = 1; //need to add max for this value
 
         this.spawnGroup = { 
             '1': this.bottomSpawnY,
@@ -54,9 +57,9 @@ class Game extends Phaser.Scene {
 
     update () {
         this.player.update();
-        /*if (Math.floor(game.getTime()) % 71 == 0) {
-            this.generateObstacles();
-        }*/
+        this.physics.world.collide(this.player, this.obstacleGroup, () => {
+            console.log('hit');
+        }, null, this);
     }
 
     //This is will generate the code for spawning waves of obstacles
