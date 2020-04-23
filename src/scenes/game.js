@@ -19,6 +19,7 @@ class Game extends Phaser.Scene {
         this.bottomSpawnY = game.config.height - laneSize/2;
         this.middleSpawnY = game.config.height/2;
         this.topSpawnY = laneSize/2;
+
         //difficulty adjustment
         //delayed functions calls will call whichever corresponding difficulty
         //enemy spawned is req'd.
@@ -36,6 +37,7 @@ class Game extends Phaser.Scene {
         // declaring controls
         upKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
         downKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
+        fireKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
         // creating player object
         this.player = new Player(this, this.playerSpriteInfo.width/2, this.bottomSpawnY, 'foo').setOrigin(0.5);
@@ -50,13 +52,19 @@ class Game extends Phaser.Scene {
             delay: 1000,
             callback: this.difficultyTable[this.difficultyLevel],
             callbackScope: this,
-            startAt: 0,
+            //startAt: 0,
             loop: true,
         })
     }
 
     update () {
         this.player.update();
+        if (this.player.isFiring) {
+            this.physics.world.collide(this.player.projectile, this.obstacleGroup, 
+                () => {
+                    console.log('boom');
+                }, null, this);
+        }
         this.physics.world.collide(this.player, this.obstacleGroup, () => {
             console.log('hit');
         }, null, this);
@@ -64,8 +72,8 @@ class Game extends Phaser.Scene {
 
     //This is will generate the code for spawning waves of obstacles
     generateObstacles() {
-        let spawnY = Phaser.Math.Between(1, 3);
-        let obstacle = new Obstacle(this, this.spawnGroup[spawnY], 0, this.obstacleVelocity).setOrigin(0.5);
+        let spawnY = Phaser.Math.Between(1, 3); //returns rand int between 1 and 3
+        let obstacle = new Obstacle(this, this.spawnGroup[spawnY], 0).setOrigin(0.5);
         this.obstacleGroup.add(obstacle);
     }
 }
