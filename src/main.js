@@ -29,7 +29,7 @@ let scoreConfig = {
     fixedWidth: 0
 }
 
-let upKey, downKey, fireKey, leftKey, rightKey , keyW , keyA , keyS , keyD , keyJ;
+let keyW , keyA , keyS , keyD , keyJ;
 
 // used to keep track of high scores between plays
 let highScore = 0;
