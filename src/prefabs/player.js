@@ -27,16 +27,19 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.projectile;
         this.setMaxVelocity(500, 0);
         this.setCollideWorldBounds(true);
+        this.playerScale = scene.scale;
     }
 
     update() {
         //character movement
         if (Phaser.Input.Keyboard.JustDown(upKey) && this.y > laneSize) {
             this.y -= game.config.height/3;
-            this.setScale(this.scene.scale - this.scene.scaleAdjust);
+            this.playerScale -= this.scene.scaleAdjust;
+            this.setScale(this.playerScale);
         } else if (Phaser.Input.Keyboard.JustDown(downKey) && this.y < game.config.height -  laneSize/2) { 
             this.y += game.config.height/3;
-            this.setScale(this.scene.scale + this.scene.scaleAdjust);
+            this.playerScale += this.scene.scaleAdjust;
+            this.setScale(this.playerScale);
         }
 
         //left right movement. First if is to prevent sliding.
