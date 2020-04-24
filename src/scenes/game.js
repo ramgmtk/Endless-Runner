@@ -23,6 +23,9 @@ class Game extends Phaser.Scene {
         this.topSpawnY = laneSize/2;
         this.scale = 1.0;
         this.scaleAdjust = 0.3;
+        // set up how to draw timer
+        this.timeAlive = 0;
+        this.timerCenter = this.add.text(game.config.width / 2 , 88 , this.timeAlive , scoreConfig).setOrigin(.5);
 
         //difficulty adjustment
         //delayed functions calls will call whichever corresponding difficulty
@@ -61,6 +64,9 @@ class Game extends Phaser.Scene {
             //startAt: 0,
             loop: true,
         })
+        // this increments the """score""" or time alive and increases it by 1 each second
+        // the function lifeTimer is at the bottom of this file
+        let lifeCounter = this.time.addEvent({ delay: 1000, callback: lifeTimer, callbackScope: this, loop: true });
     }
 
     update () {
@@ -96,4 +102,9 @@ class Game extends Phaser.Scene {
         this.gameOver = true;
         console.log('hit');
     }
+}
+
+function lifeTimer() {
+    ++this.timeAlive;
+    this.timerCenter.text = this.timeAlive;
 }
