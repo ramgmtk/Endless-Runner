@@ -26,6 +26,7 @@ class Game extends Phaser.Scene {
         // set up how to draw timer
         this.timeAlive = 0;
         this.timerCenter = this.add.text(game.config.width / 2 , 88 , this.timeAlive , scoreConfig).setOrigin(.5);
+        this.timerCenterTopScore = this.add.text(game.config.width / 2 , 20 , `Longest Time Alive: ${highScore}` , scoreConfig).setOrigin(.5);
 
         //difficulty adjustment
         //delayed functions calls will call whichever corresponding difficulty
@@ -80,9 +81,16 @@ class Game extends Phaser.Scene {
             //if player gets hit
             this.physics.world.collide(this.player, this.obstacleGroup, this.destroyPlayer, null, this);
         } else {
-            if (fireKey.isDown) {
+            this.add.text(game.config.width / 2 , game.config.height / 2 , 'GAME OVER' , scoreConfig).setOrigin(.5);
+            this.add.text(game.config.width / 2 , game.config.height / 2 + 64 , '(J) to Restart' , scoreConfig).setOrigin(.5);
+            if (fireKey.isDown || keyJ.isDown) {
                 this.scene.restart();
             }
+        }
+
+        if(this.timeAlive > highScore) {
+            highScore = this.timeAlive;
+            this.timerCenterTopScore.text = `Longest Time Alive: ${highScore}`;
         }
     }
 

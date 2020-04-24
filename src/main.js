@@ -26,7 +26,7 @@ let scoreConfig = {
         top: 5 ,
         botom: 5 ,
     },
-    fixedWidth: 100
+    fixedWidth: 0
 }
 
 let upKey, downKey, fireKey, leftKey, rightKey , keyW , keyA , keyS , keyD , keyJ;
