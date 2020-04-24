@@ -55,7 +55,7 @@ class Game extends Phaser.Scene {
         });
 
         this.obstacleSpawn = this.time.addEvent({
-            delay: 1000,
+            delay: 500,
             callback: this.difficultyTable[this.difficultyLevel],
             callbackScope: this,
             //startAt: 0,
@@ -66,18 +66,8 @@ class Game extends Phaser.Scene {
     update () {
         if (!this.gameOver) {
             this.player.update();
-            //if player is firing
-            if (this.player.isFiring) {
-                this.physics.world.collide(this.player.projectile, this.obstacleGroup, 
-                    () => {
-                        console.log('boom');
-                    }, null, this);
-            }
             //if player gets hit
-            this.physics.world.collide(this.player, this.obstacleGroup, () => {
-                this.gameOver = true;
-                console.log('hit');
-            }, null, this);
+            this.physics.world.collide(this.player, this.obstacleGroup, this.destroyPlayer, null, this);
         } else {
             if (fireKey.isDown) {
                 this.scene.restart();
@@ -90,5 +80,20 @@ class Game extends Phaser.Scene {
         let spawnY = Phaser.Math.Between(1, 3); //returns rand int between 1 and 3
         let obstacle = new Obstacle(this, this.spawnGroup[spawnY], 0).setOrigin(0.5);
         this.obstacleGroup.add(obstacle);
+    }
+
+    //called from within the obstacle class.
+    destroyObstacle(damagedObstacle) {
+        damagedObstacle.destroy();
+        this.player.projectile.destroy();
+        this.player.isFiring = false;
+        console.log("boom!");
+    }
+
+    destroyPlayer() {
+        this.time.removeAllEvents(); //clears the event calls
+        this.obstacleGroup.runChildUpdate = false; //clear the obstacle group
+        this.gameOver = true;
+        console.log('hit');
     }
 }
