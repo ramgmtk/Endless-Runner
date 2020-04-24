@@ -25,6 +25,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.isFiring = false;
         this.scene = scene;
         this.projectile;
+        this.setMaxVelocity(500, 0);
     }
 
     update() {
@@ -36,6 +37,15 @@ class Player extends Phaser.Physics.Arcade.Sprite {
             this.y += game.config.height/3;
             this.setScale(this.scene.scale + this.scene.scaleAdjust);
         }
+
+        if (Phaser.Input.Keyboard.JustUp(leftKey) || Phaser.Input.Keyboard.JustUp(rightKey)) {
+            this.setAccelerationX(0);
+            this.setVelocityX(0);
+        } else if (leftKey.isDown && this.x > 0) {
+            this.setAccelerationX(-this.scene.playerAccel);
+        } else if (rightKey.isDown && this.x < game.config.width) {
+            this.setAccelerationX(this.scene.playerAccel);
+        } 
         //projectile fire code
         //if projectile is firing, prevent firing of additional projectile.
         if (this.isFiring) {

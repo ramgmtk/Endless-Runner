@@ -16,6 +16,7 @@ class Game extends Phaser.Scene {
         this.playerSpriteInfo = this.playerSpriteInfo.getSourceImage();
         //Game variables
         this.obstacleVelocity = -500;
+        this.playerAccel = 600;
         this.bottomSpawnY = game.config.height - laneSize/2;
         this.middleSpawnY = game.config.height/2;
         this.topSpawnY = laneSize/2;
@@ -40,6 +41,8 @@ class Game extends Phaser.Scene {
         upKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
         downKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
         fireKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+        leftKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
+        rightKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
 
         // creating player object
         this.player = new Player(this, this.playerSpriteInfo.width/2, this.middleSpawnY, 'foo').setOrigin(0.5);

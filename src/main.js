@@ -15,7 +15,7 @@ let config = {
     scene: [Game],
 }
 
-let upKey, downKey, fireKey;
+let upKey, downKey, fireKey, leftKey, rightKey;
 
 let laneSize = config.height/3;
 
