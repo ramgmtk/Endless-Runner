@@ -31,8 +31,10 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         //character movement
         if (Phaser.Input.Keyboard.JustDown(upKey) && this.y > laneSize) {
             this.y -= game.config.height/3;
+            this.setScale(this.scene.scale - this.scene.scaleAdjust);
         } else if (Phaser.Input.Keyboard.JustDown(downKey) && this.y < game.config.height -  laneSize/2) { 
             this.y += game.config.height/3;
+            this.setScale(this.scene.scale + this.scene.scaleAdjust);
         }
         //projectile fire code
         //if projectile is firing, prevent firing of additional projectile.

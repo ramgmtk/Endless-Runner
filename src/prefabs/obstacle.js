@@ -6,6 +6,13 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite {
 
         this.setVelocityX(scene.obstacleVelocity);
         this.setImmovable(true);
+
+        //scale enemies to their lane
+        if (this.y > game.config.height / 2) {
+            this.setScale(scene.scale + scene.scaleAdjust);
+        } else if (this.y < game.config.height / 2) {
+            this.setScale(scene.scale - scene.scaleAdjust);
+        }
     }
 
     update () {

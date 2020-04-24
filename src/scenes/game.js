@@ -6,7 +6,7 @@ class Game extends Phaser.Scene {
 
     preload () {
         // dummy asset
-        this.load.image('foo', './assets/foo.png')
+        this.load.image('foo', './assets/foo.png');
     }
 
     create () {
@@ -19,6 +19,8 @@ class Game extends Phaser.Scene {
         this.bottomSpawnY = game.config.height - laneSize/2;
         this.middleSpawnY = game.config.height/2;
         this.topSpawnY = laneSize/2;
+        this.scale = 1.0;
+        this.scaleAdjust = 0.3;
 
         //difficulty adjustment
         //delayed functions calls will call whichever corresponding difficulty
@@ -40,7 +42,7 @@ class Game extends Phaser.Scene {
         fireKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
         // creating player object
-        this.player = new Player(this, this.playerSpriteInfo.width/2, this.bottomSpawnY, 'foo').setOrigin(0.5);
+        this.player = new Player(this, this.playerSpriteInfo.width/2, this.middleSpawnY, 'foo').setOrigin(0.5);
 
         //enemy spawner
         this.obstacleGroup = this.add.group({
@@ -59,12 +61,14 @@ class Game extends Phaser.Scene {
 
     update () {
         this.player.update();
+        //if player is firing
         if (this.player.isFiring) {
             this.physics.world.collide(this.player.projectile, this.obstacleGroup, 
                 () => {
                     console.log('boom');
                 }, null, this);
         }
+        //if player gets hit
         this.physics.world.collide(this.player, this.obstacleGroup, () => {
             console.log('hit');
         }, null, this);
