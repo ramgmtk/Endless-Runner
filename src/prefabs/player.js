@@ -26,6 +26,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.scene = scene;
         this.projectile;
         this.setMaxVelocity(500, 0);
+        this.setCollideWorldBounds(true);
     }
 
     update() {
@@ -38,12 +39,13 @@ class Player extends Phaser.Physics.Arcade.Sprite {
             this.setScale(this.scene.scale + this.scene.scaleAdjust);
         }
 
+        //left right movement. First if is to prevent sliding.
         if (Phaser.Input.Keyboard.JustUp(leftKey) || Phaser.Input.Keyboard.JustUp(rightKey)) {
             this.setAccelerationX(0);
             this.setVelocityX(0);
-        } else if (leftKey.isDown && this.x > 0) {
+        } else if (leftKey.isDown) {
             this.setAccelerationX(-this.scene.playerAccel);
-        } else if (rightKey.isDown && this.x < game.config.width) {
+        } else if (rightKey.isDown) {
             this.setAccelerationX(this.scene.playerAccel);
         } 
         //projectile fire code

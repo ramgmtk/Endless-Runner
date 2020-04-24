@@ -15,6 +15,7 @@ class Game extends Phaser.Scene {
         this.playerSpriteInfo = game.textures.get('foo');
         this.playerSpriteInfo = this.playerSpriteInfo.getSourceImage();
         //Game variables
+        this.gameOver = false;
         this.obstacleVelocity = -500;
         this.playerAccel = 600;
         this.bottomSpawnY = game.config.height - laneSize/2;
@@ -63,18 +64,25 @@ class Game extends Phaser.Scene {
     }
 
     update () {
-        this.player.update();
-        //if player is firing
-        if (this.player.isFiring) {
-            this.physics.world.collide(this.player.projectile, this.obstacleGroup, 
-                () => {
-                    console.log('boom');
-                }, null, this);
+        if (!this.gameOver) {
+            this.player.update();
+            //if player is firing
+            if (this.player.isFiring) {
+                this.physics.world.collide(this.player.projectile, this.obstacleGroup, 
+                    () => {
+                        console.log('boom');
+                    }, null, this);
+            }
+            //if player gets hit
+            this.physics.world.collide(this.player, this.obstacleGroup, () => {
+                this.gameOver = true;
+                console.log('hit');
+            }, null, this);
+        } else {
+            if (fireKey.isDown) {
+                this.scene.restart();
+            }
         }
-        //if player gets hit
-        this.physics.world.collide(this.player, this.obstacleGroup, () => {
-            console.log('hit');
-        }, null, this);
     }
 
     //This is will generate the code for spawning waves of obstacles
