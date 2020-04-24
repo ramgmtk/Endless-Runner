@@ -32,24 +32,27 @@ class Player extends Phaser.Physics.Arcade.Sprite {
 
     update() {
         //character movement
-        if (Phaser.Input.Keyboard.JustDown(upKey) && this.y > laneSize) {
+        if ((Phaser.Input.Keyboard.JustDown(upKey) || Phaser.Input.Keyboard.JustDown(keyW))
+                                                                                && this.y > laneSize) {
             this.y -= game.config.height/3;
             this.playerScale -= this.scene.scaleAdjust;
             this.setScale(this.playerScale);
-        } else if (Phaser.Input.Keyboard.JustDown(downKey) && this.y < game.config.height -  laneSize/2) { 
+        } else if ((Phaser.Input.Keyboard.JustDown(downKey) || Phaser.Input.Keyboard.JustDown(keyS))
+                                                        && this.y < game.config.height -  laneSize/2) { 
             this.y += game.config.height/3;
             this.playerScale += this.scene.scaleAdjust;
             this.setScale(this.playerScale);
         }
 
         //left right movement. First if is to prevent sliding.
-        if (Phaser.Input.Keyboard.JustUp(leftKey) || Phaser.Input.Keyboard.JustUp(rightKey)) {
+        if (Phaser.Input.Keyboard.JustUp(leftKey) || Phaser.Input.Keyboard.JustUp(rightKey)
+                || Phaser.Input.Keyboard.JustUp(keyA) || Phaser.Input.Keyboard.JustUp(keyD)) {
             this.setAccelerationX(0);
             this.setVelocityX(0);
-        } else if (leftKey.isDown) {
+        } else if (leftKey.isDown || keyA.isDown) {
             this.setAccelerationX(0);
             this.setVelocityX(-500);
-        } else if (rightKey.isDown) {
+        } else if (rightKey.isDown || keyD.isDown) {
             this.setAccelerationX(this.scene.playerAccel);
         } 
         //projectile fire code
@@ -61,7 +64,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
                 this.isFiring = false;
             }
         } else {
-            if (Phaser.Input.Keyboard.JustDown(fireKey)) {
+            if (Phaser.Input.Keyboard.JustDown(fireKey) || Phaser.Input.Keyboard.JustDown(keyJ)) {
                 this.isFiring = true;
                 this.projectile = new Projectile(this.scene, this.x, this.y, 'foo');
             }
