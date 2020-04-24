@@ -12,7 +12,7 @@ let config = {
             }
         }
     },
-    scene: [Game],
+    scene: [Menu , Game],
 }
 
 let upKey, downKey, fireKey, leftKey, rightKey;
