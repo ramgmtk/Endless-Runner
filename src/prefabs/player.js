@@ -4,12 +4,14 @@ class Projectile extends Phaser.Physics.Arcade.Sprite {
 
         scene.add.existing(this);
         scene.physics.add.existing(this);
+        this.scene = scene;
         this.setImmovable(true);
-        this.setVelocityX(-1*scene.obstacleVelocity);
+        this.setVelocityX(-2*scene.obstacleVelocity);
     }
 
     update() {
         if (this.x > game.config.width) {
+            this.scene.playerCoolDown = 0;
             this.destroy();
         }
     }
@@ -23,6 +25,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         scene.physics.add.existing(this);
         this.setImmovable(true);
         this.isFiring = false;
+        this.coolDown = false;
         this.scene = scene;
         this.projectile;
         this.setMaxVelocity(500, 0);
@@ -59,13 +62,22 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         if (this.isFiring) { //redundant and should probably be added to the scene if statement
             if (this.projectile.active) {
                 this.projectile.update();
-            } else {
-                this.isFiring = false; //might need to be removed
+            } else if (this.coolDown == true) {
+                this.coolDown = false;
+                this.scene.time.addEvent({
+                    delay: this.scene.playerCoolDown,
+                    callback: () => {
+                        console.log("event triggered");
+                        this.isFiring = false;
+                    },
+                    callbackScope: this.scene,
+                });
             }
         } else {
             if (Phaser.Input.Keyboard.JustDown(keyJ)) {
                 this.isFiring = true;
                 this.projectile = new Projectile(this.scene, this.x, this.y, 'foo').setScale(this.playerScale);
+                this.coolDown = true;
             }
         }
     }

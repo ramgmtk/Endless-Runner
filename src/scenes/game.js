@@ -14,15 +14,19 @@ class Game extends Phaser.Scene {
         //credit to user rich: https://www.html5gamedevs.com/topic/36286-get-image-from-cache/
         this.playerSpriteInfo = game.textures.get('foo');
         this.playerSpriteInfo = this.playerSpriteInfo.getSourceImage();
+
         //Game variables
         this.gameOver = false;
         this.obstacleVelocity = -500;
         this.playerAccel = 600;
+        this.defaultCoolDown = 1500;
+        this.playerCoolDown = this.defaultCooldown;
         this.bottomSpawnY = game.config.height - laneSize/2; //only three spawn variables for 3 lanes, does not translate well to increase in lane size
         this.middleSpawnY = game.config.height/2;
         this.topSpawnY = laneSize/2;
         this.scale = 1.0;
         this.scaleAdjust = 0.3;
+
         // set up how to draw timer
         this.timeAlive = 0;
         this.timerCenter = this.add.text(game.config.width / 2 , 88 , this.timeAlive , scoreConfig).setOrigin(.5);
@@ -121,9 +125,9 @@ class Game extends Phaser.Scene {
 
     //object1 and object2 passed from phaser collision handler
     destroyObstacle(object1, object2) {
+        this.playerCoolDown = this.defaultCoolDown;
         object1.destroy();
         object2.destroy();
-        this.player.isFiring = false; //this will need to be removed.
         console.log("boom!");
     }
 
