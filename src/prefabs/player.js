@@ -57,6 +57,8 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         } else if (keyA.isDown) {
             this.setAccelerationX(0);
             this.setVelocityX(obstacleVelocity);
+            //Credit to user Yannick:
+            //https://phaser.discourse.group/t/check-if-animation-is-playing/1473
             if (this.anims.getCurrentKey() != 'Fire') {
                 this.anims.play('Idle', false);
             }
