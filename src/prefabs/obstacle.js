@@ -1,12 +1,11 @@
 class Obstacle extends Phaser.Physics.Arcade.Sprite {
-    constructor(scene, y, frame = 0) {
-        super(scene, game.config.width, y, 'foo', frame);
+    constructor(scene, x, y, frame = 0) {
+        super(scene, x, y, 'foo', frame);
         scene.add.existing(this);
         scene.physics.add.existing(this);
 
         this.setVelocityX(scene.obstacleVelocity);
         this.setImmovable(true);
-        this.scene = scene;
 
         //scale enemies to their lane
         if (this.y > game.config.height / 2) {
@@ -19,10 +18,6 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite {
     update () {
         if (this.x < 0) {
             this.destroy();
-        } else if (this.scene.player.isFiring) {
-            this.scene.physics.world.collide(this, this.scene.player.projectile, () => {
-                this.scene.destroyObstacle(this);
-            }, null, this.scene);
-        }
+        } 
     }
 }

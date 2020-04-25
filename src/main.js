@@ -33,7 +33,17 @@ let keyW , keyA , keyS , keyD , keyJ;
 
 // used to keep track of high scores between plays
 let highScore = 0;
+//variables for lanes, can be changes later should more need to be added.
+let laneNumber = 3
+let laneSize = config.height/laneNumber;
 
-let laneSize = config.height/3;
+function factorial(n) {
+    let k = n;
+    while (k > 1) {
+        n = n * (n - 1);
+        k = k - 1;
+    }
+    return k;
+}
 
 let game = new Phaser.Game(config);

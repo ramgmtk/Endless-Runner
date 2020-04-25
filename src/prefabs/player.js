@@ -28,6 +28,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.setMaxVelocity(500, 0);
         this.setCollideWorldBounds(true);
         this.playerScale = scene.scale;
+        //this.setDragX(200);
     }
 
     update() {
@@ -43,27 +44,28 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         }
 
         //left right movement. First if is to prevent sliding.
-        if (Phaser.Input.Keyboard.JustUp(keyW) || Phaser.Input.Keyboard.JustUp(keyD)) {
+        if (Phaser.Input.Keyboard.JustUp(keyA) || Phaser.Input.Keyboard.JustUp(keyD)) {
             this.setAccelerationX(0);
             this.setVelocityX(0);
         } else if (keyA.isDown) {
             this.setAccelerationX(0);
-            this.setVelocityX(-500);
+            this.setVelocityX(this.scene.obstacleVelocity);
         } else if (keyD.isDown) {
             this.setAccelerationX(this.scene.playerAccel);
+            //this.setVelocityX(-this.scene.obstacleVelocity);
         } 
         //projectile fire code
         //if projectile is firing, prevent firing of additional projectile.
-        if (this.isFiring) {
+        if (this.isFiring) { //redundant and should probably be added to the scene if statement
             if (this.projectile.active) {
                 this.projectile.update();
             } else {
-                this.isFiring = false;
+                this.isFiring = false; //might need to be removed
             }
         } else {
             if (Phaser.Input.Keyboard.JustDown(keyJ)) {
                 this.isFiring = true;
-                this.projectile = new Projectile(this.scene, this.x, this.y, 'foo');
+                this.projectile = new Projectile(this.scene, this.x, this.y, 'foo').setScale(this.playerScale);
             }
         }
     }
