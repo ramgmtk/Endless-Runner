@@ -17,20 +17,15 @@ class Game extends Phaser.Scene {
 
         //Game variables
         this.gameOver = false;
-        this.obstacleVelocity = -500;
-        this.playerAccel = 600;
-        this.defaultCoolDown = 1500;
-        this.playerCoolDown = this.defaultCooldown;
+        this.playerCoolDown = defaultCoolDown;
         this.bottomSpawnY = game.config.height - laneSize/2; //only three spawn variables for 3 lanes, does not translate well to increase in lane size
-        this.middleSpawnY = game.config.height/2;
+        this.middleSpawnY = centerY;
         this.topSpawnY = laneSize/2;
-        this.scale = 1.0;
-        this.scaleAdjust = 0.3;
 
         // set up how to draw timer
         this.timeAlive = 0;
-        this.timerCenter = this.add.text(game.config.width / 2 , 88 , this.timeAlive , scoreConfig).setOrigin(.5);
-        this.timerCenterTopScore = this.add.text(game.config.width / 2 , 20 , `Longest Time Alive: ${highScore}` , scoreConfig).setOrigin(.5);
+        this.timerCenter = this.add.text(centerX , 88 , this.timeAlive , scoreConfig).setOrigin(.5);
+        this.timerCenterTopScore = this.add.text(centerX, 20 , `Longest Time Alive: ${highScore}` , scoreConfig).setOrigin(.5);
 
         //difficulty adjustment
         //delayed functions calls will call whichever corresponding difficulty
@@ -42,7 +37,6 @@ class Game extends Phaser.Scene {
             this.middleSpawnY,
             this.topSpawnY,
         ]
-        this.spawnNumbers = new Set(); //used by medium spawner
 
         // declaring controls
         keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
@@ -52,7 +46,7 @@ class Game extends Phaser.Scene {
         keyJ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.J);
 
         // creating player object
-        this.player = new Player(this, this.playerSpriteInfo.width/2, this.middleSpawnY, 'foo').setOrigin(0.5);
+        this.player = new Player(this, this.playerSpriteInfo.width/2, this.middleSpawnY, spriteAtlasName, 'sprite5').setOrigin(0.5);
 
         //enemy spawner
         this.obstacleGroup = this.add.group({
@@ -61,12 +55,12 @@ class Game extends Phaser.Scene {
         });
 
         this.obstacleSpawn = this.time.addEvent({
-            delay: 1000,
+            delay: 1500,
             callback: this.generateObstacles, //this does not work, not always calling right function, therefore all coding bust be in the same function
             callbackScope: this,
             //startAt: 0,
             loop: true,
-        })
+        });
         // this increments the """score""" or time alive and increases it by 1 each second
         // the function lifeTimer is at the bottom of this file
         let lifeCounter = this.time.addEvent({ delay: 1000, callback: lifeTimer, callbackScope: this, loop: true });
@@ -79,6 +73,38 @@ class Game extends Phaser.Scene {
                 console.log("Difficulty increased");
             },
             callbackScope: this,
+        });
+
+        //animation create
+        this.anims.create({
+            key: 'Ora',
+            defaultTextureKey: spriteAtlasName,
+            frames: [
+                {frame: 'sprite1'},
+                {frame: 'sprite7'}
+            ],
+            frameRate: 12,
+            repeat: -1,
+        });
+
+        this.anims.create({
+            key: 'Fire',
+            defaultTextureKey: spriteAtlasName,
+            frames: [{frame: 'sprite3'}],
+            duration: 1000,
+        })
+
+        this.anims.create({
+            key: 'Run',
+            defaultTextureKey: spriteAtlasName,
+            frames: [{frame: 'sprite5'}],
+            repeat: -1.
+        })
+
+        this.anims.create({
+            key: 'Idle',
+            defaultTextureKey: spriteAtlasName,
+            frames: [{frame: 'sprite2'}],
         })
     }
 
@@ -94,8 +120,8 @@ class Game extends Phaser.Scene {
                 this.physics.world.collide(this.player.projectile, this.obstacleGroup, this.destroyObstacle, null, this);
             }
         } else {
-            this.add.text(game.config.width / 2 , game.config.height / 2 , 'GAME OVER' , scoreConfig).setOrigin(.5);
-            this.add.text(game.config.width / 2 , game.config.height / 2 + 64 , '(J) to Restart' , scoreConfig).setOrigin(.5);
+            this.add.text(centerX , centerY , 'GAME OVER' , scoreConfig).setOrigin(.5);
+            this.add.text(centerX , centerY + 64 , '(J) to Restart' , scoreConfig).setOrigin(.5);
             if (keyJ.isDown) {
                 this.scene.restart();
             }
@@ -112,20 +138,20 @@ class Game extends Phaser.Scene {
     generateObstacles() {
         if (this.difficultyLevel == 0) {
             let spawnY = Phaser.Math.Between(0, 2); //returns rand int between 0 and 2
-            let obstacle = new Obstacle(this, game.config.width, this.spawnGroup[spawnY], 0).setOrigin(0.5);
+            let obstacle = new Obstacle(this, game.config.width, this.spawnGroup[spawnY]).setOrigin(0.5);
             this.obstacleGroup.add(obstacle);
         } else {
             let offset = 0;
-            let obstacle_1 = new Obstacle(this, game.config.width - offset, this.spawnGroup[0], 0).setOrigin(0.5);
-            let obstacle_2 = new Obstacle(this, game.config.width - offset, this.spawnGroup[1], 0).setOrigin(0.5);
-            let obstacle_3 = new Obstacle(this, game.config.width - offset, this.spawnGroup[2], 0).setOrigin(0.5);
+            let obstacle_1 = new Obstacle(this, game.config.width - offset, this.spawnGroup[0]).setOrigin(0.5);
+            let obstacle_2 = new Obstacle(this, game.config.width - offset, this.spawnGroup[1]).setOrigin(0.5);
+            let obstacle_3 = new Obstacle(this, game.config.width - offset, this.spawnGroup[2]).setOrigin(0.5);
             this.obstacleGroup.addMultiple([obstacle_1, obstacle_2, obstacle_3]);
         }
     }
 
     //object1 and object2 passed from phaser collision handler
     destroyObstacle(object1, object2) {
-        this.playerCoolDown = this.defaultCoolDown;
+        this.playerCoolDown = defaultCoolDown;
         object1.destroy();
         object2.destroy();
         console.log("boom!");

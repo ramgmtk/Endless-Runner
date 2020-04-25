@@ -30,12 +30,21 @@ let scoreConfig = {
 }
 
 let keyW , keyA , keyS , keyD , keyJ;
-
+// center X and center Y are the two centers of the screen, call these instead of game.config.width / 2
+let centerX = config.width / 2;
+let centerY = config.height / 2;
 // used to keep track of high scores between plays
 let highScore = 0;
 //variables for lanes, can be changes later should more need to be added.
 let laneNumber = 3
 let laneSize = config.height/laneNumber;
+//some gamevariables
+let obstacleVelocity = -500;
+let playerAccel = 600;
+let defaultCoolDown = 1500;
+let scale = 1.0;
+let scaleAdjust = 0.3;
+let spriteAtlasName = 'prototype_atlas';
 
 function factorial(n) {
     let k = n;

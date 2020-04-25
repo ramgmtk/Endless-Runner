@@ -7,6 +7,8 @@ class Menu extends Phaser.Scene {
         // load audio
         //example below of how to load audio
         // this.load.audio('sfx_select', './assets/blip_select12.wav');
+        this.load.path = './assets/';
+        this.load.atlas(spriteAtlasName, 'spritesheet_1.png', 'sprites_3.json');
     }
 
     create(){
@@ -25,9 +27,6 @@ class Menu extends Phaser.Scene {
         }
 
         // show menu text
-        // center X and center Y are the two centers of the screen, call these instead of game.config.width / 2
-        let centerX = game.config.width / 2;
-        let centerY = game.config.height / 2;
         // let textSpacer = 64;
 
         // this is how you add static text that won't change at all
