@@ -12,8 +12,7 @@ class Game extends Phaser.Scene {
     create () {
         //fetching image size from cache
         //credit to user rich: https://www.html5gamedevs.com/topic/36286-get-image-from-cache/
-        this.playerSpriteInfo = game.textures.get('foo');
-        this.playerSpriteInfo = this.playerSpriteInfo.getSourceImage();
+        this.playerSpriteInfo = game.textures.getFrame(spriteAtlasName, 'sprite8'); //NEEDS TO BE FIXED
 
         //Game variables
         this.gameOver = false;
@@ -24,8 +23,8 @@ class Game extends Phaser.Scene {
 
         // set up how to draw timer
         this.timeAlive = 0;
-        this.timerCenter = this.add.text(centerX , 88 , this.timeAlive , scoreConfig).setOrigin(.5);
-        this.timerCenterTopScore = this.add.text(centerX, 20 , `Longest Time Alive: ${highScore}` , scoreConfig).setOrigin(.5);
+        this.timerCenter = this.add.text(centerX , 88 , this.timeAlive , scoreConfig).setOrigin(.5).setDepth(1);
+        this.timerCenterTopScore = this.add.text(centerX, 20 , `Longest Time Alive: ${highScore}` , scoreConfig).setOrigin(.5).setDepth(1);
 
         //difficulty adjustment
         //delayed functions calls will call whichever corresponding difficulty
@@ -46,7 +45,9 @@ class Game extends Phaser.Scene {
         keyJ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.J);
 
         // creating player object
-        this.player = new Player(this, this.playerSpriteInfo.width/2, this.middleSpawnY, spriteAtlasName, 'sprite5').setOrigin(0.5);
+        this.player = new Player(this, this.playerSpriteInfo.width/2, this.middleSpawnY, spriteAtlasName, 'sprite5').setScale(scale).setOrigin(0.5).setDepth(1);
+        //create background
+        this.background = this.add.tileSprite(0, 0, 1080, 720, 'ER_FantasyRugby_Background').setOrigin(0).setDepth(0);
 
         //enemy spawner
         this.obstacleGroup = this.add.group({
@@ -55,7 +56,7 @@ class Game extends Phaser.Scene {
         });
 
         this.obstacleSpawn = this.time.addEvent({
-            delay: 1500,
+            delay: 2500,
             callback: this.generateObstacles, //this does not work, not always calling right function, therefore all coding bust be in the same function
             callbackScope: this,
             //startAt: 0,
@@ -73,6 +74,7 @@ class Game extends Phaser.Scene {
                 console.log("Difficulty increased");
             },
             callbackScope: this,
+            repeat: 1,
         });
 
         //animation create
@@ -91,7 +93,8 @@ class Game extends Phaser.Scene {
             key: 'Fire',
             defaultTextureKey: spriteAtlasName,
             frames: [{frame: 'sprite3'}],
-            duration: 1000,
+            frameRate: 24,
+            repeat: 12,
         })
 
         this.anims.create({
@@ -110,6 +113,7 @@ class Game extends Phaser.Scene {
 
     update () {
         if (!this.gameOver) {
+            this.background.tilePositionX += 8;
             //update playerobject
             this.player.update();
 
@@ -138,14 +142,27 @@ class Game extends Phaser.Scene {
     generateObstacles() {
         if (this.difficultyLevel == 0) {
             let spawnY = Phaser.Math.Between(0, 2); //returns rand int between 0 and 2
-            let obstacle = new Obstacle(this, game.config.width, this.spawnGroup[spawnY]).setOrigin(0.5);
+            let obstacle = new Obstacle(this, game.config.width, this.spawnGroup[spawnY], obstacleVelocity).setOrigin(0.5);
             this.obstacleGroup.add(obstacle);
-        } else {
-            let offset = 0;
-            let obstacle_1 = new Obstacle(this, game.config.width - offset, this.spawnGroup[0]).setOrigin(0.5);
-            let obstacle_2 = new Obstacle(this, game.config.width - offset, this.spawnGroup[1]).setOrigin(0.5);
-            let obstacle_3 = new Obstacle(this, game.config.width - offset, this.spawnGroup[2]).setOrigin(0.5);
+        } else if (this.difficultyLevel == 1) {
+            let obstacle_1 = new Obstacle(this, game.config.width, this.spawnGroup[0], obstacleVelocity).setOrigin(0.5);
+            let obstacle_2 = new Obstacle(this, game.config.width, this.spawnGroup[1], obstacleVelocity).setOrigin(0.5);
+            let obstacle_3 = new Obstacle(this, game.config.width, this.spawnGroup[2], obstacleVelocity).setOrigin(0.5);
             this.obstacleGroup.addMultiple([obstacle_1, obstacle_2, obstacle_3]);
+        } else if (this.difficultyLevel == 2) {
+            //Credit to aardvarkk for providing logic to creating semi randomized selection
+            //https://stackoverflow.com/questions/6625551/math-random-number-without-repeating-a-previous-number
+            let numArray = [1, 2, 3];//SHOULD BE FIXED HARDCODED
+            let obstacleArray = [];
+            let spawnNum = Phaser.Math.Between(0, numArray.length - 1);
+            for (let i = 0; i < numOfLanes; i++) {
+                for (let j = 0; j < numArray[spawnNum]; j++) {
+                    obstacleArray.push(new Obstacle(this, game.config.width + (this.playerSpriteInfo.width*j), this.spawnGroup[i], obstacleVelocity - 200).setOrigin(0.5))
+                }
+                numArray.splice(spawnNum, 1);
+                spawnNum = Phaser.Math.Between(0, numArray.length - 1);
+            }
+            this.obstacleGroup.addMultiple(obstacleArray);
         }
     }
 

@@ -9,6 +9,7 @@ class Menu extends Phaser.Scene {
         // this.load.audio('sfx_select', './assets/blip_select12.wav');
         this.load.path = './assets/';
         this.load.atlas(spriteAtlasName, 'spritesheet_1.png', 'sprites_3.json');
+        this.load.image('ER_FantasyRugby_Background');
     }
 
     create(){

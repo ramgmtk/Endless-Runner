@@ -76,7 +76,6 @@ class Player extends Phaser.Physics.Arcade.Sprite {
                 this.scene.time.addEvent({
                     delay: this.scene.playerCoolDown,
                     callback: () => {
-                        console.log("event triggered");
                         this.isFiring = false;
                     },
                     callbackScope: this.scene,
