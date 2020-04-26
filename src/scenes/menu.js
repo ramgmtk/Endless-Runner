@@ -31,7 +31,9 @@ class Menu extends Phaser.Scene {
         // let textSpacer = 64;
 
         // this is how you add static text that won't change at all
-        this.add.text(centerX , centerY, 'FANTASY RUNNER' , menuConfig).setOrigin(.5);
+        this.add.text(centerX , centerY - 32, 'FANTASY RUNNER' , menuConfig).setOrigin(.5);
+        this.add.text(centerX, centerY, 'WASD to move, (J) to fire', menuConfig).setOrigin(0.5);
+        this.add.text(centerX, centerY + 32, 'Press J to start', menuConfig).setOrigin(0.5);
         // menuConfig.backgroundColor = '#00FF00';
         // menuConfig.color = '#000';
         // this is how you make a text variable that can change!
