@@ -16,10 +16,12 @@ class Game extends Phaser.Scene {
 
         //Game variables
         this.gameOver = false;
+        this.playerSlope; //used for vectoring player back to the center for the death animation.
+        //this.gameOverFlag = false;
         this.playerCoolDown = defaultCoolDown;
         this.bottomSpawnY = game.config.height - laneSize/2; //only three spawn variables for 3 lanes, does not translate well to increase in lane size
         this.middleSpawnY = centerY;
-        this.topSpawnY = laneSize/2;
+        this.topSpawnY = centerY - laneSize;
 
         // set up how to draw timer
         this.timeAlive = 0;
@@ -36,7 +38,7 @@ class Game extends Phaser.Scene {
             this.bottomSpawnY,
             this.middleSpawnY,
             this.topSpawnY,
-        ]
+        ];
 
         // declaring controls
         keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
@@ -96,25 +98,25 @@ class Game extends Phaser.Scene {
             frames: [{frame: 'sprite3'}],
             frameRate: 24,
             repeat: 12,
-        })
+        });
 
         this.anims.create({
             key: 'Run',
             defaultTextureKey: spriteAtlasName,
             frames: [{frame: 'sprite5'}],
             repeat: -1.
-        })
+        });
 
         this.anims.create({
             key: 'Idle',
             defaultTextureKey: spriteAtlasName,
             frames: [{frame: 'sprite2'}],
-        })
+        });
     }
 
     update () {
         if (!this.gameOver) {
-            this.background.tilePositionX += 8;
+            this.background.tilePositionX += 8.0;
             //update playerobject
             this.player.update();
 
@@ -125,10 +127,15 @@ class Game extends Phaser.Scene {
                 this.physics.world.collide(this.player.projectile, this.obstacleGroup, this.destroyObstacle, null, this);
             }
         } else {
-            this.add.text(centerX , centerY , 'GAME OVER' , scoreConfig).setOrigin(.5);
-            this.add.text(centerX , centerY + 64 , '(J) to Restart' , scoreConfig).setOrigin(.5);
-            if (keyJ.isDown) {
-                this.scene.restart();
+            //This is code sends player to the center of the screen. The code is inefficient, not clean, and possibly prone to errors.
+            if (this.player.x > centerX + 4 || this.player.x < centerX - 4) { //NOTE THE SCALAR MUST BE LESS THAN 2*MARGIN OF ERROR TO PREVENT INFINITE SLIDE
+                this.player.x += 7*this.playerSlope.x;
+            }
+            if (this.player.y > centerY + 4 || this.player.y < centerY - 4) {
+                this.player.y += 7*this.playerSlope.y;
+            } else if (this.player.x <= centerX + 4 && this.player.x >= centerX - 4){
+                this.background = this.add.tileSprite(0, 0, 1080, 720, 'foo').setOrigin(0, 0);
+                this.restartGame();
             }
         }
 
@@ -214,7 +221,30 @@ class Game extends Phaser.Scene {
         this.obstacleGroup.runChildUpdate = false; //clear the obstacle group
         this.obstacleGroup.clear(true, true);
         this.gameOver = true;
+        this.background.destroy();
+        this.player.setVelocityX(0);
+        this.player.setAccelerationX(0);
+        this.player.setScale(scale);
+
+        //calculating slope of line to center for game over.
+        this.playerSlope = {
+            x: centerX - this.player.x,
+            y: centerY - this.player.y,
+        };
+        let magnitude = Math.sqrt((this.playerSlope.x * this.playerSlope.x) + 
+            (this.playerSlope.y * this.playerSlope.y));
+        this.playerSlope.x = this.playerSlope.x / magnitude;
+        this.playerSlope.y = this.playerSlope.y / magnitude;
+        console.log(this.player.x);
         console.log('hit');
+    }
+
+    restartGame() {
+        this.add.text(centerX , centerY , 'GAME OVER' , scoreConfig).setOrigin(.5).setDepth(2);
+        this.add.text(centerX , centerY + 64 , '(J) to Restart' , scoreConfig).setOrigin(.5).setDepth(2);
+        if (keyJ.isDown) {
+            this.scene.restart();
+        }
     }
 }
 
