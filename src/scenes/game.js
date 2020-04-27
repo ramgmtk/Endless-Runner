@@ -30,6 +30,7 @@ class Game extends Phaser.Scene {
         //delayed functions calls will call whichever corresponding difficulty
         //enemy spawned is req'd.
         this.difficultyLevel = 0; //need to add max for this value
+        this.difficultyMax = 3;
 
         this.spawnGroup = [ 
             this.bottomSpawnY,
@@ -57,7 +58,7 @@ class Game extends Phaser.Scene {
 
         this.obstacleSpawn = this.time.addEvent({
             delay: 2500,
-            callback: this.generateObstacles, //this does not work, not always calling right function, therefore all coding bust be in the same function
+            callback: this.generateObstacles,
             callbackScope: this,
             //startAt: 0,
             loop: true,
@@ -74,7 +75,7 @@ class Game extends Phaser.Scene {
                 console.log("Difficulty increased");
             },
             callbackScope: this,
-            repeat: 1,
+            repeat: this.difficultyMax + 1,
         });
 
         //animation create
@@ -140,24 +141,56 @@ class Game extends Phaser.Scene {
 
     //This is will generate the code for spawning waves of obstacles
     generateObstacles() {
-        if (this.difficultyLevel == 0) {
-            let spawnY = Phaser.Math.Between(0, 2); //returns rand int between 0 and 2
-            let obstacle = new Obstacle(this, game.config.width, this.spawnGroup[spawnY], obstacleVelocity).setOrigin(0.5);
+        let level, velocityIncrease, spawnY, spawnNum;
+        let obstacleArray = [];
+        let numArray = [1, 2, 3];
+        //at max difficulty cycle between the various difficulties
+        if (this.difficultyLevel > this.difficultyMax) {
+            level = Phaser.Math.Between(0, this.difficultyMax);
+            velocityIncrease = dVelocity;
+        }
+        else {
+            level = this.difficultyLevel;
+            velocityIncrease = 0;
+        }
+
+
+        if (level == 0) {
+            spawnY = Phaser.Math.Between(0, 2); //returns rand int between 0 and 2
+            let obstacle = new Obstacle(this, game.config.width, this.spawnGroup[spawnY], obstacleVelocity - (3 * velocityIncrease)).setOrigin(0.5);
             this.obstacleGroup.add(obstacle);
-        } else if (this.difficultyLevel == 1) {
-            let obstacle_1 = new Obstacle(this, game.config.width, this.spawnGroup[0], obstacleVelocity).setOrigin(0.5);
-            let obstacle_2 = new Obstacle(this, game.config.width, this.spawnGroup[1], obstacleVelocity).setOrigin(0.5);
-            let obstacle_3 = new Obstacle(this, game.config.width, this.spawnGroup[2], obstacleVelocity).setOrigin(0.5);
-            this.obstacleGroup.addMultiple([obstacle_1, obstacle_2, obstacle_3]);
-        } else if (this.difficultyLevel == 2) {
+        } else if (level == 1) {
+            for (let i = 0; i < numOfLanes; i++) {
+                obstacleArray.push(new Obstacle(this, game.config.width, this.spawnGroup[i], 
+                    obstacleVelocity - (3 * velocityIncrease)).setOrigin(0.5));
+            }
+            this.obstacleGroup.addMultiple(obstacleArray);
+        } else if (level == 2) {
             //Credit to aardvarkk for providing logic to creating semi randomized selection
             //https://stackoverflow.com/questions/6625551/math-random-number-without-repeating-a-previous-number
-            let numArray = [1, 2, 3];//SHOULD BE FIXED HARDCODED
-            let obstacleArray = [];
-            let spawnNum = Phaser.Math.Between(0, numArray.length - 1);
+            let laneArray = [0, 1, 2];//SHOULD BE FIXED HARDCODED
+            let laneNum = Phaser.Math.Between(0, laneArray.length - 1);
+            spawnNum = Phaser.Math.Between(0, numArray.length - 1);
+            for (let i = 0; i < numOfLanes - 1; i++) {
+                for (let j = 0; j < numArray[spawnNum]; j++) {
+                    obstacleArray.push(new Obstacle(this, game.config.width + (this.playerSpriteInfo.width*j), 
+                        this.spawnGroup[laneArray[laneNum]], obstacleVelocity - (3 * velocityIncrease)).setOrigin(0.5))
+                }
+                numArray.splice(spawnNum, 1);
+                laneArray.splice(laneNum, 1);
+                laneNum = Phaser.Math.Between(0, laneArray.length - 1); 
+                spawnNum = Phaser.Math.Between(0, numArray.length - 1);
+                
+            }
+            this.obstacleGroup.addMultiple(obstacleArray);
+        } else if (level == 3) {
+            //Credit to aardvarkk for providing logic to creating semi randomized selection
+            //https://stackoverflow.com/questions/6625551/math-random-number-without-repeating-a-previous-number
+            spawnNum = Phaser.Math.Between(0, numArray.length - 1);
             for (let i = 0; i < numOfLanes; i++) {
                 for (let j = 0; j < numArray[spawnNum]; j++) {
-                    obstacleArray.push(new Obstacle(this, game.config.width + (this.playerSpriteInfo.width*j), this.spawnGroup[i], obstacleVelocity - 200).setOrigin(0.5))
+                    obstacleArray.push(new Obstacle(this, game.config.width + (this.playerSpriteInfo.width*j), 
+                        this.spawnGroup[i], obstacleVelocity - (2 * velocityIncrease)).setOrigin(0.5))
                 }
                 numArray.splice(spawnNum, 1);
                 spawnNum = Phaser.Math.Between(0, numArray.length - 1);

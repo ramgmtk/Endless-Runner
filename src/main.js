@@ -40,6 +40,7 @@ let numOfLanes = 3
 let laneSize = config.height/numOfLanes;
 //some gamevariables
 let obstacleVelocity = -500;
+let dVelocity = 200;
 let playerAccel = 600;
 let defaultCoolDown = 1000;
 let scale = 1.5;
