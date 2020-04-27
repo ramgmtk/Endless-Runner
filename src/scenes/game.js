@@ -50,7 +50,7 @@ class Game extends Phaser.Scene {
         // creating player object
         this.player = new Player(this, this.playerSpriteInfo.width/2, this.middleSpawnY, spriteAtlasName, 'sprite5').setScale(scale).setOrigin(0.5).setDepth(1);
         //create background
-        this.background = this.add.tileSprite(0, 0, 1080, 720, 'ER_FantasyRugby_Background').setOrigin(0).setDepth(0);
+        this.background = this.add.tileSprite(0, uiSizeY, 1080, 720, 'ER_FantasyRugby_Background').setOrigin(0).setDepth(0);
 
         //enemy spawner
         this.obstacleGroup = this.add.group({
@@ -127,6 +127,7 @@ class Game extends Phaser.Scene {
                 this.physics.world.collide(this.player.projectile, this.obstacleGroup, this.destroyObstacle, null, this);
             }
         } else {
+            //SHOULD FIX, THAT SUCH THAT EVEN IF THE TRAVEL TO CENTER FAILS, INITIATE GAME-OVER SCREEN
             //This is code sends player to the center of the screen. The code is inefficient, not clean, and possibly prone to errors.
             if (this.player.x > centerX + 4 || this.player.x < centerX - 4) { //NOTE THE SCALAR MUST BE LESS THAN 2*MARGIN OF ERROR TO PREVENT INFINITE SLIDE
                 this.player.x += 7*this.playerSlope.x;
@@ -134,7 +135,7 @@ class Game extends Phaser.Scene {
             if (this.player.y > centerY + 4 || this.player.y < centerY - 4) {
                 this.player.y += 7*this.playerSlope.y;
             } else if (this.player.x <= centerX + 4 && this.player.x >= centerX - 4){
-                this.background = this.add.tileSprite(0, 0, 1080, 720, 'foo').setOrigin(0, 0);
+                this.background = this.add.tileSprite(0, uiSizeY, 1080, 720, 'foo').setOrigin(0, 0);
                 this.restartGame();
             }
         }

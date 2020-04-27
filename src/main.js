@@ -31,14 +31,14 @@ let scoreConfig = {
 
 let keyW , keyA , keyS , keyD , keyJ;
 // center X and center Y are the two centers of the screen, call these instead of game.config.width / 2
-//let uiSize = 80;
+let uiSizeY = 80;
 let centerX = config.width / 2;
-let centerY = (config.height / 2) //+ uiSize;
+let centerY = ((config.height - uiSizeY) / 2) + uiSizeY;
 // used to keep track of high scores between plays
 let highScore = 0;
 //variables for lanes, can be changes later should more need to be added.
 let numOfLanes = 3
-let laneSize = (config.height /*- uiSize*/)/numOfLanes;
+let laneSize = (config.height - uiSizeY)/numOfLanes;
 //some gamevariables
 let obstacleVelocity = -500;
 let dVelocity = 200;

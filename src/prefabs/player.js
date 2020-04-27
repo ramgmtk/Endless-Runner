@@ -38,11 +38,11 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     update() {
         //character movement
         if (Phaser.Input.Keyboard.JustDown(keyW) && this.y > laneSize/2) {
-            this.y -= game.config.height/3;
+            this.y -= laneSize;
             this.playerScale -= scaleAdjust;
             this.setScale(this.playerScale);
         } else if (Phaser.Input.Keyboard.JustDown(keyS) && this.y < game.config.height -  laneSize/2) { 
-            this.y += game.config.height/3;
+            this.y += laneSize;
             this.playerScale += scaleAdjust;
             this.setScale(this.playerScale);
         }
