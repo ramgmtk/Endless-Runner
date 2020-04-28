@@ -141,13 +141,14 @@ class Game extends Phaser.Scene {
             if (this.player.y < game.config.height - this.playerSpriteInfo.height) {
                 this.player.y += 7*this.playerSlope.y;
             } else if (this.player.x <= centerX + 4 && this.player.x >= centerX - 4){
-                this.background.setAlpha(1.0);
+                //insert check to see if death animation is done before executing the rest of the tasks in this block.
+                this.background.setAlpha(1.0); //spotlight call
                 if (this.alphaValue < 0.15) {
                     this.alphaValue += 0.001;
                     this.restartGame();
                     console.log('updating');
                 }
-                if (keyJ.isDown) {
+                if (keyJ.isDown) { //consider taking this outide of the else if chain so the user can skip the death screen.
                     this.scene.restart();
                 }
             }
@@ -252,6 +253,7 @@ class Game extends Phaser.Scene {
             (this.playerSlope.y * this.playerSlope.y));
         this.playerSlope.x = this.playerSlope.x / magnitude;
         this.playerSlope.y = this.playerSlope.y / magnitude;
+        //Start death animation here
     }
 
     restartGame() {
