@@ -50,7 +50,7 @@ class Game extends Phaser.Scene {
         // creating player object
         this.player = new Player(this, this.playerSpriteInfo.width/2, this.middleSpawnY, spriteAtlasName, 'sprite5').setScale(scale).setOrigin(0.5).setDepth(1);
         //create background
-        this.background = this.add.tileSprite(0, uiSizeY, 1080, 720, 'ER_FantasyRugby_Background').setOrigin(0).setDepth(0);
+        this.background = this.add.tileSprite(0, uiSizeY, 1080, 720, 'ER_FantasyRugby_Background_v2').setOrigin(0).setDepth(0);
 
         //enemy spawner
         this.obstacleGroup = this.add.group({
