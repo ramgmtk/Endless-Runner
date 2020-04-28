@@ -66,6 +66,7 @@ class Game extends Phaser.Scene {
             //startAt: 0,
             loop: true,
         });
+
         // this increments the """score""" or time alive and increases it by 1 each second
         // the function lifeTimer is at the bottom of this file
         let lifeCounter = this.time.addEvent({ delay: 1000, callback: lifeTimer, callbackScope: this, loop: true });
@@ -76,9 +77,11 @@ class Game extends Phaser.Scene {
             callback : () => {
                 this.difficultyLevel++;
                 console.log("Difficulty increased");
+                this.playerCoolDown -= 50;
+                this.obstacleSpawn.delay -= 150;
             },
             callbackScope: this,
-            repeat: this.difficultyMax + 1,
+            repeat: this.difficultyMax + 5,
         });
 
         //animation create
