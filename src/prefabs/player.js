@@ -37,7 +37,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
 
     update() {
         //character movement
-        if (Phaser.Input.Keyboard.JustDown(keyW) && this.y > laneSize/2) {
+        if (Phaser.Input.Keyboard.JustDown(keyW) && this.y > this.scene.topSpawnY) {
             this.y -= laneSize;
             this.playerScale -= scaleAdjust;
             this.setScale(this.playerScale);
@@ -50,7 +50,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
             this.anims.play('Run', true);
         }
 
-        //left right movement. First if is to prevent sliding.
+        //left right movement. First if is to prevent sliding. SHOULD FIX LOOK INTO DRAG
         if (Phaser.Input.Keyboard.JustUp(keyA) || Phaser.Input.Keyboard.JustUp(keyD)) {
             this.setAccelerationX(0);
             this.setVelocityX(0);
@@ -71,7 +71,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         if (this.isFiring) { //redundant and should probably be added to the scene if statement
             if (this.projectile.active) {
                 this.projectile.update();
-            } else if (this.coolDown == true) {
+            } else if (this.coolDown) {
                 this.coolDown = false;
                 this.scene.time.addEvent({
                     delay: this.scene.playerCoolDown,

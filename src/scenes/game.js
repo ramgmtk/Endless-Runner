@@ -225,6 +225,9 @@ class Game extends Phaser.Scene {
         this.background.destroy();
         this.player.setVelocityX(0);
         this.player.setAccelerationX(0);
+        if (this.player.coolDown) {
+            this.player.projectile.destroy();
+        }
         this.player.setScale(scale);
 
         //calculating slope of line to center for game over.
