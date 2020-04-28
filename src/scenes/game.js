@@ -17,6 +17,7 @@ class Game extends Phaser.Scene {
         //Game variables
         this.gameOver = false;
         this.playerSlope; //used for vectoring player back to the center for the death animation.
+        this.alphaValue = 0.00;
         //this.gameOverFlag = false;
         this.playerCoolDown = defaultCoolDown;
         this.bottomSpawnY = game.config.height - laneSize/2; //only three spawn variables for 3 lanes, does not translate well to increase in lane size
@@ -48,7 +49,7 @@ class Game extends Phaser.Scene {
         keyJ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.J);
 
         // creating player object
-        this.player = new Player(this, this.playerSpriteInfo.width/2, this.middleSpawnY, spriteAtlasName, 'sprite5').setScale(scale).setOrigin(0.5).setDepth(1);
+        this.player = new Player(this, this.playerSpriteInfo.width/2, this.middleSpawnY, spriteAtlasName, 'sprite5').setScale(scale).setOrigin(0.5).setDepth(2);
         //create background
         this.background = this.add.tileSprite(0, uiSizeY, 1080, 720, 'ER_FantasyRugby_Background_v2').setOrigin(0).setDepth(0);
 
@@ -112,6 +113,11 @@ class Game extends Phaser.Scene {
             defaultTextureKey: spriteAtlasName,
             frames: [{frame: 'sprite2'}],
         });
+
+        //changes that happen on death do not need to be updated often
+        if (this.gameOver && (this.player.x > centerX + 4 || this.player.x < centerX - 4)) {
+            this.background = this.add.tileSprite(0, uiSizeY, 1080, 720, 'foo').setOrigin(0, 0);
+        }
     }
 
     update () {
@@ -132,11 +138,18 @@ class Game extends Phaser.Scene {
             if (this.player.x > centerX + 4 || this.player.x < centerX - 4) { //NOTE THE SCALAR MUST BE LESS THAN 2*MARGIN OF ERROR TO PREVENT INFINITE SLIDE
                 this.player.x += 7*this.playerSlope.x;
             }
-            if (this.player.y > centerY + 4 || this.player.y < centerY - 4) {
+            if (this.player.y < game.config.height - this.playerSpriteInfo.height) {
                 this.player.y += 7*this.playerSlope.y;
             } else if (this.player.x <= centerX + 4 && this.player.x >= centerX - 4){
-                this.background = this.add.tileSprite(0, uiSizeY, 1080, 720, 'foo').setOrigin(0, 0);
-                this.restartGame();
+                this.background.setAlpha(1.0);
+                if (this.alphaValue < 0.15) {
+                    this.alphaValue += 0.001;
+                    this.restartGame();
+                    console.log('updating');
+                }
+                if (keyJ.isDown) {
+                    this.scene.restart();
+                }
             }
         }
 
@@ -212,7 +225,6 @@ class Game extends Phaser.Scene {
         this.playerCoolDown = defaultCoolDown;
         object1.destroy();
         object2.destroy();
-        console.log("boom!");
     }
 
     //currently on game over, obstacles off infinitely off screen
@@ -223,6 +235,7 @@ class Game extends Phaser.Scene {
         this.obstacleGroup.clear(true, true);
         this.gameOver = true;
         this.background.destroy();
+        this.background = this.add.tileSprite(0, uiSizeY, 1080, 720, 'foo').setOrigin(0, 0).setAlpha(0.0).setDepth(0);
         this.player.setVelocityX(0);
         this.player.setAccelerationX(0);
         if (this.player.coolDown) {
@@ -233,22 +246,18 @@ class Game extends Phaser.Scene {
         //calculating slope of line to center for game over.
         this.playerSlope = {
             x: centerX - this.player.x,
-            y: centerY - this.player.y,
+            y: game.config.height  - this.playerSpriteInfo.height - this.player.y,
         };
         let magnitude = Math.sqrt((this.playerSlope.x * this.playerSlope.x) + 
             (this.playerSlope.y * this.playerSlope.y));
         this.playerSlope.x = this.playerSlope.x / magnitude;
         this.playerSlope.y = this.playerSlope.y / magnitude;
-        console.log(this.player.x);
-        console.log('hit');
     }
 
     restartGame() {
-        this.add.text(centerX , centerY , 'GAME OVER' , scoreConfig).setOrigin(.5).setDepth(2);
-        this.add.text(centerX , centerY + 64 , '(J) to Restart' , scoreConfig).setOrigin(.5).setDepth(2);
-        if (keyJ.isDown) {
-            this.scene.restart();
-        }
+        this.add.text(centerX , centerY , 'GAME OVER' , scoreConfig).setOrigin(.5).setDepth(2).setAlpha(this.alphaValue);
+        this.add.text(centerX , centerY + 64 , '(J) to Restart' , scoreConfig).setOrigin(.5).setDepth(2).setAlpha(this.alphaValue);
+        this.add.tileSprite(0, uiSizeY, 1080, 720, 'dio').setOrigin(0).setAlpha(this.alphaValue/50).setDepth(1);
     }
 }
 
