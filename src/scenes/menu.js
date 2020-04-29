@@ -12,6 +12,9 @@ class Menu extends Phaser.Scene {
         this.load.image('ER_FantasyRugby_Background_v2');
         this.load.image('dio');
         this.load.image('scoreboard');
+
+        this.load.audio('cheer', 'higherPitchCrowd.wav');
+        this.load.audio('crowd', 'crowd.wav');
     }
 
     create(){

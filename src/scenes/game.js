@@ -54,6 +54,24 @@ class Game extends Phaser.Scene {
         this.background = this.add.tileSprite(0, uiSizeY, 1080, 720, 'ER_FantasyRugby_Background_v2').setOrigin(0).setDepth(0);
         this.add.tileSprite(0, 0, 270, 20, 'scoreboard').setOrigin(0).setDepth(0).setScale(4);
 
+        //sound stuff
+        this.bgm = this.sound.add('crowd', {
+            mute: false,
+            volume: 0.75,
+            rate: 1.0,
+            loop: true,
+
+        });
+
+        this.hitEffect = this.sound.add('cheer', {
+            mute: false,
+            volume: 0.50,
+            rate: 1.0,
+            loop: false,
+        });
+
+        this.bgm.play();
+
         //enemy spawner
         this.obstacleGroup = this.add.group({
             scene: this,
@@ -226,6 +244,7 @@ class Game extends Phaser.Scene {
 
     //object1 and object2 passed from phaser collision handler
     destroyObstacle(object1, object2) {
+        this.hitEffect.play();
         this.playerCoolDown = defaultCoolDown;
         object1.destroy();
         object2.destroy();
@@ -234,6 +253,7 @@ class Game extends Phaser.Scene {
     //currently on game over, obstacles off infinitely off screen
     //should delete objects from obstacle group
     destroyPlayer() {
+        this.bgm.mute = true;
         this.time.removeAllEvents(); //clears the event calls
         this.obstacleGroup.runChildUpdate = false; //clear the obstacle group
         this.obstacleGroup.clear(true, true);
