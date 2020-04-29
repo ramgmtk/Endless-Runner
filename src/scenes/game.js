@@ -26,8 +26,8 @@ class Game extends Phaser.Scene {
 
         // set up how to draw timer
         this.timeAlive = 0;
-        this.timerCenter = this.add.text(centerX , 88 , this.timeAlive , scoreConfig).setOrigin(.5).setDepth(1);
-        this.timerCenterTopScore = this.add.text(centerX, 20 , `Longest Time Alive: ${highScore}` , scoreConfig).setOrigin(.5).setDepth(1);
+        this.timerCenter = this.add.text(240 , 40 , `Home: ${this.timeAlive}` , scoreConfig).setOrigin(.5).setDepth(1);
+        this.timerCenterTopScore = this.add.text(game.config.width - 240, 40 , `Away: ${highScore}` , scoreConfig).setOrigin(.5).setDepth(1);
 
         //difficulty adjustment
         //delayed functions calls will call whichever corresponding difficulty
@@ -52,6 +52,7 @@ class Game extends Phaser.Scene {
         this.player = new Player(this, this.playerSpriteInfo.width/2, this.middleSpawnY, spriteAtlasName, 'sprite5').setScale(scale).setOrigin(0.5).setDepth(2);
         //create background
         this.background = this.add.tileSprite(0, uiSizeY, 1080, 720, 'ER_FantasyRugby_Background_v2').setOrigin(0).setDepth(0);
+        this.add.tileSprite(0, 0, 270, 20, 'scoreboard').setOrigin(0).setDepth(0).setScale(4);
 
         //enemy spawner
         this.obstacleGroup = this.add.group({
@@ -71,7 +72,7 @@ class Game extends Phaser.Scene {
         // the function lifeTimer is at the bottom of this file
         let lifeCounter = this.time.addEvent({ delay: 1000, callback: lifeTimer, callbackScope: this, loop: true });
 
-        //difficulty
+        //difficulty //dont necessarily need a pointer to it SHOULD FIX
         let difficultyBump = this.time.addEvent({
             delay: 10000,
             callback : () => {
@@ -149,7 +150,6 @@ class Game extends Phaser.Scene {
                 if (this.alphaValue < 0.15) {
                     this.alphaValue += 0.001;
                     this.restartGame();
-                    console.log('updating');
                 }
                 if (keyJ.isDown) { //consider taking this outide of the else if chain so the user can skip the death screen.
                     this.scene.restart();
@@ -160,7 +160,7 @@ class Game extends Phaser.Scene {
         //update high score
         if(this.timeAlive > highScore) {
             highScore = this.timeAlive;
-            this.timerCenterTopScore.text = `Longest Time Alive: ${highScore}`;
+            this.timerCenterTopScore.text = `Away: ${highScore}`;
         }
     }
 
@@ -268,5 +268,5 @@ class Game extends Phaser.Scene {
 
 function lifeTimer() {
     ++this.timeAlive;
-    this.timerCenter.text = this.timeAlive;
+    this.timerCenter.text = `Home: ${this.timeAlive}`;
 }

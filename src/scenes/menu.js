@@ -11,6 +11,7 @@ class Menu extends Phaser.Scene {
         this.load.atlas(spriteAtlasName, 'spritesheet_1.png', 'sprites_3.json');
         this.load.image('ER_FantasyRugby_Background_v2');
         this.load.image('dio');
+        this.load.image('scoreboard');
     }
 
     create(){
