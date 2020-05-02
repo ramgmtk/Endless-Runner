@@ -47,15 +47,14 @@ class Menu extends Phaser.Scene {
         // will need this is there are different difficulties or different modes
         // this.rocketControlText = this.add.text(centerX , centerY + textSpacer*3.5 , 'OFF' , menuConfig).setOrigin(.5);
         keyJ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.J);
-        this.bgm = this.sound.add('title', {
+        this.bgmenu = this.sound.add('title', {
             mute: false,
-            volume: 0.75,
+            volume: 1.0,
             rate: 1.0,
             loop: true,
-
         });
 
-        this.bgm.play();
+        this.bgmenu.play();
     }
 
     update() {
@@ -63,6 +62,7 @@ class Menu extends Phaser.Scene {
             // example of how to play a sound once
             // this.sound.play('sfx_select');
             // launches the next scene
+            this.bgmenu.mute = true;
             this.scene.start("gameScene");
         }
     }
