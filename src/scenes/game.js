@@ -43,9 +43,9 @@ class Game extends Phaser.Scene {
 
         // declaring controls
         keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
-        keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+        //keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
-        keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+        //keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
         keyJ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.J);
 
         // creating player object
@@ -94,7 +94,7 @@ class Game extends Phaser.Scene {
         let difficultyBump = this.time.addEvent({
             delay: 10000,
             callback : () => {
-                this.difficultyLevel++;
+                //this.difficultyLevel++;
                 console.log("Difficulty increased");
                 this.playerCoolDown -= 50;
                 this.obstacleSpawn.delay -= 150;
@@ -131,10 +131,23 @@ class Game extends Phaser.Scene {
         });
 
         this.anims.create({
+            key: 'stand_cooldown',
+            defaultTextureKey: spriteAtlasName,
+            frames: [{frame: 'sprite7'}],
+            duration: this.playerCoolDown,
+        })
+
+        this.anims.create({
             key: 'Idle',
             defaultTextureKey: spriteAtlasName,
             frames: [{frame: 'sprite2'}],
         });
+
+        this.anims.create({
+            key: 'stand_idle',
+            defaultTextureKey: spriteAtlasName,
+            frames: [{frame: 'sprite1'}]
+        })
 
         //changes that happen on death do not need to be updated often
         if (this.gameOver && (this.player.x > centerX + 4 || this.player.x < centerX - 4)) {
@@ -147,11 +160,10 @@ class Game extends Phaser.Scene {
             this.background.tilePositionX += 8.0;
             //update playerobject
             this.player.update();
-
             //if player gets hit
             this.physics.world.collide(this.player, this.obstacleGroup, this.destroyPlayer, null, this);
             //if the player fired
-            if (this.player.isFiring) {
+            if (this.player.projectile.fired == true) {
                 this.physics.world.collide(this.player.projectile, this.obstacleGroup, this.destroyObstacle, null, this);
             }
         } else {
@@ -160,10 +172,10 @@ class Game extends Phaser.Scene {
             if (this.player.x > centerX + 4 || this.player.x < centerX - 4) { //NOTE THE SCALAR MUST BE LESS THAN 2*MARGIN OF ERROR TO PREVENT INFINITE SLIDE
                 this.player.x += 7*this.playerSlope.x;
             }
-            if (this.player.y < game.config.height - this.playerSpriteInfo.height) {
+            if (this.player.y < game.config.height - (this.playerSpriteInfo.height * 2) - 4 || this.player.y > game.config.height - (this.playerSpriteInfo.height * 2) + 4) {
                 this.player.y += 7*this.playerSlope.y;
             } else if (this.player.x <= centerX + 4 && this.player.x >= centerX - 4){
-                //insert check to see if death animation is done before executing the rest of the tasks in this block.
+                //insert check to see if death animation is done before executing the rest of the tasks in this block. SHOULD FIX
                 this.background.setAlpha(1.0); //spotlight call
                 if (this.alphaValue < 0.15) {
                     this.alphaValue += 0.001;
@@ -245,32 +257,30 @@ class Game extends Phaser.Scene {
     //object1 and object2 passed from phaser collision handler
     destroyObstacle(object1, object2) {
         this.hitEffect.play();
-        this.playerCoolDown = defaultCoolDown;
-        object1.destroy();
         object2.destroy();
+        this.playerCoolDown = defaultCoolDown;
+        object1.anims.play('stand_cooldown');
+        object1.resetProjectile();
     }
 
     //currently on game over, obstacles off infinitely off screen
     //should delete objects from obstacle group
     destroyPlayer() {
+        this.gameOver = true;
+        this.player.projectile.destroy();
         this.bgm.mute = true;
+        this.hitEffect.mute = true;
         this.time.removeAllEvents(); //clears the event calls
         this.obstacleGroup.runChildUpdate = false; //clear the obstacle group
         this.obstacleGroup.clear(true, true);
-        this.gameOver = true;
         this.background.destroy();
-        this.background = this.add.tileSprite(0, uiSizeY, 1080, 720, 'foo').setOrigin(0, 0).setAlpha(0.0).setDepth(0);
-        this.player.setVelocityX(0);
-        this.player.setAccelerationX(0);
-        if (this.player.coolDown) {
-            this.player.projectile.destroy();
-        }
+        this.background = this.add.tileSprite(0, uiSizeY, 1080, 720, 'Spotlight').setOrigin(0, 0).setAlpha(0.0).setDepth(0);
         this.player.setScale(scale);
 
         //calculating slope of line to center for game over.
         this.playerSlope = {
             x: centerX - this.player.x,
-            y: game.config.height  - this.playerSpriteInfo.height - this.player.y,
+            y: game.config.height  - (this.playerSpriteInfo.height * 2) - this.player.y,
         };
         let magnitude = Math.sqrt((this.playerSlope.x * this.playerSlope.x) + 
             (this.playerSlope.y * this.playerSlope.y));
@@ -282,7 +292,7 @@ class Game extends Phaser.Scene {
     restartGame() {
         this.add.text(centerX , centerY , 'GAME OVER' , scoreConfig).setOrigin(.5).setDepth(2).setAlpha(this.alphaValue);
         this.add.text(centerX , centerY + 64 , '(J) to Restart' , scoreConfig).setOrigin(.5).setDepth(2).setAlpha(this.alphaValue);
-        this.add.tileSprite(0, uiSizeY, 1080, 720, 'dio').setOrigin(0).setAlpha(this.alphaValue/50).setDepth(1);
+        //this.add.tileSprite(0, uiSizeY, 1080, 720, 'dio').setOrigin(0).setAlpha(this.alphaValue/50).setDepth(1);
     }
 }
 

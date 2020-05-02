@@ -1,20 +1,44 @@
 class Projectile extends Phaser.Physics.Arcade.Sprite {
-    constructor(scene, x, y) {
+    constructor(scene, x, y, player) {
         super(scene, x, y, spriteAtlasName, 'sprite1');
 
         scene.add.existing(this);
         scene.physics.add.existing(this);
+        this.fired = false;
         this.scene = scene;
+        this.player = player;
         this.setImmovable(true);
-        this.setVelocityX(-2*obstacleVelocity);
     }
 
     update() {
-        this.anims.play('Ora', true);
-        if (this.x > game.config.width) {
-            this.scene.playerCoolDown = 0;
-            this.destroy();
+        if(this.fired == true) {
+            this.anims.play('Ora', true);
+            this.setVelocityX(-2*obstacleVelocity);
+            if (this.x > game.config.width) {
+                this.scene.playerCoolDown = 0;
+                this.resetProjectile();
+            }
+        } else {
+            //if cooldown animation is not playing play:
+            if (this.anims.getCurrentKey() != 'stand_cooldown' || !this.anims.isPlaying) {
+                this.anims.play('stand_idle', false);
+            }
+            this.y = this.player.y;
         }
+    }
+
+    resetProjectile() {
+        this.x = this.player.x - (this.scene.playerSpriteInfo.width / 2)
+        this.fired = false;
+        this.setVelocityX(0);
+        this.scene.time.addEvent({
+            delay: this.scene.playerCoolDown,
+            callback: () => {
+                this.player.isFiring = false;
+                console.log('executed firing callback');
+            },
+            callbackScope: this.scene,
+        });
     }
 }
 
@@ -26,9 +50,8 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         scene.physics.add.existing(this);
         this.setImmovable(true);
         this.isFiring = false;
-        this.coolDown = false;
         this.scene = scene;
-        this.projectile;
+        this.projectile = new Projectile(scene, x, y, this).setScale(scale).setDepth(1);
         this.setMaxVelocity(500, 0);
         this.setCollideWorldBounds(true);
         this.playerScale = scale;
@@ -36,22 +59,25 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     update() {
+        this.projectile.update();
         //character movement
         if (Phaser.Input.Keyboard.JustDown(keyW) && this.y > this.scene.topSpawnY) {
             this.y -= laneSize;
             this.playerScale -= scaleAdjust;
             this.setScale(this.playerScale);
+            this.projectile.setScale(this.playerScale);
         } else if (Phaser.Input.Keyboard.JustDown(keyS) && this.y < game.config.height -  laneSize/2) { 
             this.y += laneSize;
             this.playerScale += scaleAdjust;
             this.setScale(this.playerScale);
+            this.projectile.setScale(this.playerScale);
         }
         if (!this.anims.isPlaying) {
             this.anims.play('Run', true);
         }
 
         //left right movement. First if is to prevent sliding. SHOULD FIX LOOK INTO DRAG
-        if (Phaser.Input.Keyboard.JustUp(keyA) || Phaser.Input.Keyboard.JustUp(keyD)) {
+        /*if (Phaser.Input.Keyboard.JustUp(keyA) || Phaser.Input.Keyboard.JustUp(keyD)) {
             this.setAccelerationX(0);
             this.setVelocityX(0);
         } else if (keyA.isDown) {
@@ -65,29 +91,25 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         } else if (keyD.isDown) {
             this.setAccelerationX(playerAccel);
             //this.setVelocityX(-this.scene.obstacleVelocity);
-        } 
+        }*/ 
         //projectile fire code
         //if projectile is firing, prevent firing of additional projectile.
-        if (this.isFiring) { //redundant and should probably be added to the scene if statement
-            if (this.projectile.active) {
-                this.projectile.update();
-            } else if (this.coolDown) {
-                this.coolDown = false;
+        /*if (this.isFiring) { //redundant and should probably be added to the scene if statement
+            if (!this.projectile.fired) {
                 this.scene.time.addEvent({
                     delay: this.scene.playerCoolDown,
                     callback: () => {
                         this.isFiring = false;
+                        console.log('executed firing callback');
                     },
-                    callbackScope: this.scene,
+                    callbackScope: this,
                 });
             }
-        } else {
-            if (Phaser.Input.Keyboard.JustDown(keyJ)) {
-                this.anims.play('Fire', true);
-                this.isFiring = true;
-                this.projectile = new Projectile(this.scene, this.x, this.y).setScale(this.playerScale);
-                this.coolDown = true;
-            }
+        }*/
+        if (Phaser.Input.Keyboard.JustDown(keyJ) && !this.isFiring) {
+            this.anims.play('Fire', true);
+            this.isFiring = true;
+            this.projectile.fired = true;
         }
     }
 }

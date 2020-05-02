@@ -12,9 +12,11 @@ class Menu extends Phaser.Scene {
         this.load.image('ER_FantasyRugby_Background_v2');
         this.load.image('dio');
         this.load.image('scoreboard');
+        this.load.image('Spotlight');
 
         this.load.audio('cheer', 'higherPitchCrowd.wav');
         this.load.audio('crowd', 'crowd.wav');
+        this.load.audio('title', 'TitleScreen.wav');
     }
 
     create(){
@@ -45,6 +47,15 @@ class Menu extends Phaser.Scene {
         // will need this is there are different difficulties or different modes
         // this.rocketControlText = this.add.text(centerX , centerY + textSpacer*3.5 , 'OFF' , menuConfig).setOrigin(.5);
         keyJ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.J);
+        this.bgm = this.sound.add('title', {
+            mute: false,
+            volume: 0.75,
+            rate: 1.0,
+            loop: true,
+
+        });
+
+        this.bgm.play();
     }
 
     update() {
