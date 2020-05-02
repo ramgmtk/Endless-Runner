@@ -23,7 +23,7 @@ class Projectile extends Phaser.Physics.Arcade.Sprite {
             if (this.anims.getCurrentKey() != 'stand_cooldown' || !this.anims.isPlaying) {
                 this.anims.play('stand_idle', false);
             }
-            this.y = this.player.y;
+            this.y = this.player.y - this.scene.playerSpriteInfo.height/3;
         }
     }
 
@@ -51,7 +51,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.setImmovable(true);
         this.isFiring = false;
         this.scene = scene;
-        this.projectile = new Projectile(scene, x, y, this).setScale(scale).setDepth(1);
+        this.projectile = new Projectile(scene, x, y - this.scene.playerSpriteInfo.height/3, this).setScale(scale).setDepth(1);
         this.setMaxVelocity(500, 0);
         this.setCollideWorldBounds(true);
         this.playerScale = scale;

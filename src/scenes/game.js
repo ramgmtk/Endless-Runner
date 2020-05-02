@@ -49,7 +49,7 @@ class Game extends Phaser.Scene {
         keyJ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.J);
 
         // creating player object
-        this.player = new Player(this, this.playerSpriteInfo.width/2, this.middleSpawnY, spriteAtlasName, 'sprite5').setScale(scale).setOrigin(0.5).setDepth(2);
+        this.player = new Player(this, this.playerSpriteInfo.width, this.middleSpawnY, spriteAtlasName, 'sprite5').setScale(scale).setOrigin(0.5).setDepth(2);
         //create background
         this.background = this.add.tileSprite(0, uiSizeY, 1080, 720, 'ER_FantasyRugby_Background_v2').setOrigin(0).setDepth(0);
         this.add.tileSprite(0, 0, 270, 20, 'scoreboard').setOrigin(0).setDepth(0).setScale(4);
@@ -94,7 +94,7 @@ class Game extends Phaser.Scene {
         let difficultyBump = this.time.addEvent({
             delay: 10000,
             callback : () => {
-                //this.difficultyLevel++;
+                this.difficultyLevel++;
                 console.log("Difficulty increased");
                 this.playerCoolDown -= 50;
                 this.obstacleSpawn.delay -= 150;
@@ -125,15 +125,27 @@ class Game extends Phaser.Scene {
 
         this.anims.create({
             key: 'Run',
-            defaultTextureKey: spriteAtlasName,
-            frames: [{frame: 'sprite5'}],
+            defaultTextureKey: mainAtlas,
+            frames: [
+                {frame: 'JojoRun1'},
+                {frame: 'JojoRun2'},
+                {frame: 'JojoRun3'},
+                {frame: 'JojoRun4'},
+                {frame: 'JojoRun5'},
+                {frame: 'JojoRun6'},
+            ],
+            frameRate: 12,
             repeat: -1.
         });
 
         this.anims.create({
             key: 'stand_cooldown',
-            defaultTextureKey: spriteAtlasName,
-            frames: [{frame: 'sprite7'}],
+            defaultTextureKey: mainAtlas,
+            frames: [
+                {frame: 'StandRech1'},
+                {frame: 'StandRech2'},
+                {frame: 'StandRech3'},
+            ],
             duration: this.playerCoolDown,
         })
 
@@ -145,9 +157,57 @@ class Game extends Phaser.Scene {
 
         this.anims.create({
             key: 'stand_idle',
-            defaultTextureKey: spriteAtlasName,
-            frames: [{frame: 'sprite1'}]
-        })
+            defaultTextureKey: mainAtlas,
+            frames: [{frame: 'StandRech3'}]
+        });
+
+        this.anims.create({
+            key: 'Muda',
+            defaultTextureKey: mainAtlas,
+            frames: [
+                {frame: 'DioWalk1'},
+                {frame: 'DioWalk2'},
+                {frame: 'DioWalk3'},
+                {frame: 'DioWalk4'},
+                {frame: 'DioWalk5'},
+                {frame: 'DioWalk6'},
+                {frame: 'DioWalk7'},
+            ],
+            frameRate: 12,
+            repeat: -1,
+        });
+
+        this.anims.create({
+            key: 'The World',
+            defaultTextureKey: mainAtlas,
+            frames: [
+                {frame: 'DioDeath1'},
+                {frame: 'DioDeath2'},
+                {frame: 'DioDeath3'},
+                {frame: 'DioDeath4'},
+                {frame: 'DioDeath5'},
+                {frame: 'DioDeath6'},
+                {frame: 'DioDeath7'},
+                {frame: 'DioDeath8'},
+            ],
+            frameRate: 12,
+        });
+
+        this.anims.create({
+            key: 'OH NO',
+            defaultTextureKey: mainAtlas,
+            frames: [
+                {frame: 'JojoDie1'},
+                {frame: 'JojoDie2'},
+                {frame: 'JojoDie3'},
+                {frame: 'JojoDie4'},
+                {frame: 'JojoDie5'},
+                {frame: 'JojoDie6'},
+                {frame: 'JojoDie7'},
+                {frame: 'JojoDie8'},
+            ],
+            frameRate: 4,
+        });
 
         //changes that happen on death do not need to be updated often
         if (this.gameOver && (this.player.x > centerX + 4 || this.player.x < centerX - 4)) {
@@ -161,7 +221,9 @@ class Game extends Phaser.Scene {
             //update playerobject
             this.player.update();
             //if player gets hit
-            this.physics.world.collide(this.player, this.obstacleGroup, this.destroyPlayer, null, this);
+            this.physics.world.collide(this.player, this.obstacleGroup, this.destroyPlayer, (object1, object2) => {
+                return object2.canCollide;
+            }, this);
             //if the player fired
             if (this.player.projectile.fired == true) {
                 this.physics.world.collide(this.player.projectile, this.obstacleGroup, this.destroyObstacle, null, this);
@@ -175,14 +237,15 @@ class Game extends Phaser.Scene {
             if (this.player.y < game.config.height - (this.playerSpriteInfo.height * 2) - 4 || this.player.y > game.config.height - (this.playerSpriteInfo.height * 2) + 4) {
                 this.player.y += 7*this.playerSlope.y;
             } else if (this.player.x <= centerX + 4 && this.player.x >= centerX - 4){
-                //insert check to see if death animation is done before executing the rest of the tasks in this block. SHOULD FIX
-                this.background.setAlpha(1.0); //spotlight call
-                if (this.alphaValue < 0.15) {
-                    this.alphaValue += 0.001;
-                    this.restartGame();
-                }
-                if (keyJ.isDown) { //consider taking this outide of the else if chain so the user can skip the death screen.
-                    this.scene.restart();
+                if (!this.player.anims.isPlaying) {
+                    this.background.setAlpha(1.0); //spotlight call
+                    if (this.alphaValue < 0.15) {
+                        this.alphaValue += 0.001;
+                        this.restartGame();
+                    }
+                    if (keyJ.isDown) { //consider taking this outide of the else if chain so the user can skip the death screen.
+                        this.scene.restart();
+                    }
                 }
             }
         }
@@ -257,7 +320,9 @@ class Game extends Phaser.Scene {
     //object1 and object2 passed from phaser collision handler
     destroyObstacle(object1, object2) {
         this.hitEffect.play();
-        object2.destroy();
+        //object2.disableBody();
+        object2.canCollide = false;
+        object2.anims.play('The World');
         this.playerCoolDown = defaultCoolDown;
         object1.anims.play('stand_cooldown');
         object1.resetProjectile();
@@ -275,7 +340,7 @@ class Game extends Phaser.Scene {
         this.obstacleGroup.clear(true, true);
         this.background.destroy();
         this.background = this.add.tileSprite(0, uiSizeY, 1080, 720, 'Spotlight').setOrigin(0, 0).setAlpha(0.0).setDepth(0);
-        this.player.setScale(scale);
+        this.player.setScale(scale + 0.5);
 
         //calculating slope of line to center for game over.
         this.playerSlope = {
@@ -286,13 +351,13 @@ class Game extends Phaser.Scene {
             (this.playerSlope.y * this.playerSlope.y));
         this.playerSlope.x = this.playerSlope.x / magnitude;
         this.playerSlope.y = this.playerSlope.y / magnitude;
-        //Start death animation here
+        this.player.anims.play('OH NO')
     }
 
     restartGame() {
-        this.add.text(centerX , centerY , 'GAME OVER' , scoreConfig).setOrigin(.5).setDepth(2).setAlpha(this.alphaValue);
-        this.add.text(centerX , centerY + 64 , '(J) to Restart' , scoreConfig).setOrigin(.5).setDepth(2).setAlpha(this.alphaValue);
-        //this.add.tileSprite(0, uiSizeY, 1080, 720, 'dio').setOrigin(0).setAlpha(this.alphaValue/50).setDepth(1);
+        this.add.text(centerX , centerY - 100 , 'GAME OVER' , scoreConfig).setOrigin(.5).setDepth(2).setAlpha(this.alphaValue);
+        this.add.text(centerX , centerY - 36 , '(J) to Restart' , scoreConfig).setOrigin(.5).setDepth(2).setAlpha(this.alphaValue);
+        this.add.tileSprite(0, uiSizeY, 1080, 720, 'dio').setOrigin(0).setAlpha(this.alphaValue/50).setDepth(1);
     }
 }
 

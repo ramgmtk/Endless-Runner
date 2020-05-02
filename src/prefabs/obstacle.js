@@ -7,6 +7,7 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite {
         this.setVelocityX(velocity);
         this.setImmovable(true);
         this.setDepth(1);
+        this.canCollide = true;
 
         //scale enemies to their lane
         if (this.y > centerY) {
@@ -16,11 +17,12 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite {
         } else {
             this.setScale(scale);
         }
+        this.anims.play('Muda');
     }
 
     update () {
-        if (this.x < 0) {
+        if ((!this.anims.isPlaying && this.anims.getCurrentKey() == 'The World') || this.x < 0) {
             this.destroy();
-        } 
+        }
     }
 }

@@ -9,6 +9,7 @@ class Menu extends Phaser.Scene {
         // this.load.audio('sfx_select', './assets/blip_select12.wav');
         this.load.path = './assets/';
         this.load.atlas(spriteAtlasName, 'spritesheet_1.png', 'sprites_3.json');
+        this.load.atlas(mainAtlas, 'allSprites.png', 'allSprites.json')
         this.load.image('ER_FantasyRugby_Background_v2');
         this.load.image('dio');
         this.load.image('scoreboard');
@@ -47,14 +48,14 @@ class Menu extends Phaser.Scene {
         // will need this is there are different difficulties or different modes
         // this.rocketControlText = this.add.text(centerX , centerY + textSpacer*3.5 , 'OFF' , menuConfig).setOrigin(.5);
         keyJ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.J);
-        this.bgmenu = this.sound.add('title', {
+        /*this.bgmenu = this.sound.add('title', {
             mute: false,
             volume: 1.0,
             rate: 1.0,
             loop: true,
         });
 
-        this.bgmenu.play();
+        this.bgmenu.play();*/
     }
 
     update() {
@@ -62,7 +63,7 @@ class Menu extends Phaser.Scene {
             // example of how to play a sound once
             // this.sound.play('sfx_select');
             // launches the next scene
-            this.bgmenu.mute = true;
+            //this.bgmenu.mute = true;
             this.scene.start("gameScene");
         }
     }
