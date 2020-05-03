@@ -419,8 +419,10 @@ class Game extends Phaser.Scene {
     }
 
     restartGame() {
-        this.add.text(centerX , centerY - 100 , 'GAME OVER' , scoreConfig).setOrigin(.5).setDepth(2).setAlpha(this.alphaValue);
-        this.add.text(centerX , centerY - 36 , '(J) to Restart' , scoreConfig).setOrigin(.5).setDepth(2).setAlpha(this.alphaValue);
+        // this.add.text(centerX , centerY - 100 , 'GAME OVER' , scoreConfig).setOrigin(.5).setDepth(2).setAlpha(this.alphaValue);
+        // this.add.text(centerX , centerY - 36 , '(J) to Restart' , scoreConfig).setOrigin(.5).setDepth(2).setAlpha(this.alphaValue);
+        this.add.tileSprite(centerX , centerY - 34 , 348 , 50 , 'gameOver').setOrigin(.5).setAlpha(60);
+        this.add.tileSprite(centerX, centerY + 30, 469 , 45 , 'tryAgain').setOrigin(.5).setAlpha(60);
         this.add.tileSprite(0, uiSizeY, 1080, 720, 'dio').setOrigin(0).setAlpha(this.alphaValue/50).setDepth(1);
     }
 }
