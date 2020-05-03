@@ -22,8 +22,8 @@ let config = {
 let scoreConfig = {
     fontFamily: 'Courier' ,
     fontSize: '28px' ,
-    backgroundColor: '#F3B141' ,
-    color: '#843605' ,
+    // backgroundColor: '#c70000' ,
+    color: '#c70000' ,
     align: 'right' ,
     padding: {
         top: 5 ,

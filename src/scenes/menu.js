@@ -17,6 +17,8 @@ class Menu extends Phaser.Scene {
         this.load.image('titleScreen');
         this.load.image('gameOver');
         this.load.image('tryAgain');
+        this.load.image('score');
+        this.load.image('localHighScore');
 
         this.load.audio('cheer', 'higherPitchCrowd.wav');
         this.load.audio('crowd', 'crowd.wav');

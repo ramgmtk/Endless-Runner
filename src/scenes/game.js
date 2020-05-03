@@ -26,8 +26,10 @@ class Game extends Phaser.Scene {
 
         // set up how to draw timer
         this.timeAlive = 0;
-        this.timerCenter = this.add.text(240 , 40 , `Home: ${this.timeAlive}` , scoreConfig).setOrigin(.5).setDepth(1);
-        this.timerCenterTopScore = this.add.text(game.config.width - 240, 40 , `Away: ${highScore}` , scoreConfig).setOrigin(.5).setDepth(1);
+        this.timerCenter = this.add.text(320 , 40 , `${this.timeAlive}` , scoreConfig).setOrigin(.5).setDepth(1);
+        this.timerCenterTopScore = this.add.text(centerX + 380, 40 , `${highScore}` , scoreConfig).setOrigin(.5).setDepth(1);
+        this.add.tileSprite(240 , 40 , 105 , 24 , 'score').setOrigin(.5).setDepth(1);
+        this.add.tileSprite(centerX + 200 , 40 , 286 , 24 , 'localHighScore').setOrigin(.5).setDepth(1);
 
         //difficulty adjustment
         //delayed functions calls will call whichever corresponding difficulty
@@ -241,7 +243,7 @@ class Game extends Phaser.Scene {
         if(localStorage.getItem('hiscore') != null) {
             let storedScore = parseInt(localStorage.getItem('hiscore'));
             highScore = storedScore;
-            this.timerCenterTopScore.text = `Away: ${highScore}`;
+            this.timerCenterTopScore.text = `${highScore}`;
             //console.log(`storedScore: ${storedScore}`);
             //console.log(`highScore: ${highScore}`);
             // see if current score is higher than stored score
@@ -259,7 +261,7 @@ class Game extends Phaser.Scene {
             //update high score
             if(this.timeAlive > highScore) {
                 highScore = this.timeAlive;
-                this.timerCenterTopScore.text = `Away: ${highScore}`;
+                this.timerCenterTopScore.text = `${highScore}`;
                 //console.log('Updating High Score');
             }
 
@@ -429,5 +431,5 @@ class Game extends Phaser.Scene {
 
 function lifeTimer() {
     ++this.timeAlive;
-    this.timerCenter.text = `Home: ${this.timeAlive}`;
+    this.timerCenter.text = `${this.timeAlive}`;
 }
