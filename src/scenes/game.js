@@ -213,10 +213,35 @@ class Game extends Phaser.Scene {
         if (this.gameOver && (this.player.x > centerX + 4 || this.player.x < centerX - 4)) {
             this.background = this.add.tileSprite(0, uiSizeY, 1080, 720, 'foo').setOrigin(0, 0);
         }
+
+
+        // check for high score in local storage
+        // uncomment console.log statements if you need to debug local storage
+        if(localStorage.getItem('hiscore') != null) {
+            let storedScore = parseInt(localStorage.getItem('hiscore'));
+            highScore = storedScore;
+            this.timerCenterTopScore.text = `Away: ${highScore}`;
+            console.log(`storedScore: ${storedScore}`);
+            console.log(`highScore: ${highScore}`);
+            // see if current score is higher than stored score
+        } else {
+            console.log('No high score stored. Creating new.');
+            highScore = 0;
+            localStorage.setItem('hiscore', highScore.toString());
+            let storedScore = parseInt(localStorage.getItem('hiscore'));
+            // newHighScore = true;
+        }
     }
 
     update () {
         if (!this.gameOver) {
+            //update high score
+            if(this.timeAlive > highScore) {
+                highScore = this.timeAlive;
+                this.timerCenterTopScore.text = `Away: ${highScore}`;
+                console.log('Updating High Score');
+            }
+
             this.background.tilePositionX += 8.0;
             //update playerobject
             this.player.update();
@@ -248,12 +273,19 @@ class Game extends Phaser.Scene {
                     }
                 }
             }
-        }
-
-        //update high score
-        if(this.timeAlive > highScore) {
-            highScore = this.timeAlive;
-            this.timerCenterTopScore.text = `Away: ${highScore}`;
+            if(this.timeAlive > highScore) {
+                //console.log(`New high score: ${level}`);
+                localStorage.setItem('hiscore', this.timeAlive.toString());
+                highScore = this.timeAlive;
+                console.log(`New High Score!`);
+                console.log(highScore);
+                // newHighScore = true;
+            } else {
+                console.log('No new high score :/');
+                highScore = parseInt(localStorage.getItem('hiscore'));
+                console.log(`highScore: ${highScore}`);
+                // newHighScore = false;
+            }
         }
     }
 
