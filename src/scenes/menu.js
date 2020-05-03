@@ -14,10 +14,13 @@ class Menu extends Phaser.Scene {
         this.load.image('dio');
         this.load.image('scoreboard');
         this.load.image('Spotlight');
+        this.load.image('titleScreen');
+        this.load.image('gameOver');
 
         this.load.audio('cheer', 'higherPitchCrowd.wav');
         this.load.audio('crowd', 'crowd.wav');
         this.load.audio('title', 'TitleScreen.wav');
+        this.load.audio('gameOver', 'gameOver.wav');
     }
 
     create(){
@@ -35,27 +38,29 @@ class Menu extends Phaser.Scene {
             fixedWidth: 0
         }
 
+        this.background = this.add.tileSprite(0, 0, 1080, 720, 'titleScreen').setOrigin(0, 0);
+
         // show menu text
         // let textSpacer = 64;
 
         // this is how you add static text that won't change at all
-        this.add.text(centerX , centerY - 32 - uiSizeY, 'FANTASY RUNNER' , menuConfig).setOrigin(.5);
-        this.add.text(centerX, centerY - uiSizeY, 'WASD to move, (J) to fire', menuConfig).setOrigin(0.5);
-        this.add.text(centerX, centerY + 32 - uiSizeY, 'Press J to start', menuConfig).setOrigin(0.5);
+        // this.add.text(centerX , centerY - 32 - uiSizeY, 'FANTASY RUNNER' , menuConfig).setOrigin(.5);
+        // this.add.text(centerX, centerY - uiSizeY, 'WASD to move, (J) to fire', menuConfig).setOrigin(0.5);
+        // this.add.text(centerX, centerY + 32 - uiSizeY, 'Press J to start', menuConfig).setOrigin(0.5);
         // menuConfig.backgroundColor = '#00FF00';
         // menuConfig.color = '#000';
         // this is how you make a text variable that can change!
         // will need this is there are different difficulties or different modes
         // this.rocketControlText = this.add.text(centerX , centerY + textSpacer*3.5 , 'OFF' , menuConfig).setOrigin(.5);
         keyJ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.J);
-        /*this.bgmenu = this.sound.add('title', {
+        this.bgmenu = this.sound.add('title', {
             mute: false,
             volume: 1.0,
             rate: 1.0,
             loop: true,
         });
 
-        this.bgmenu.play();*/
+        this.bgmenu.play();
     }
 
     update() {
@@ -63,7 +68,7 @@ class Menu extends Phaser.Scene {
             // example of how to play a sound once
             // this.sound.play('sfx_select');
             // launches the next scene
-            //this.bgmenu.mute = true;
+            this.bgmenu.mute = true;
             this.scene.start("gameScene");
         }
     }

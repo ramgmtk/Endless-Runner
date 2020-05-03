@@ -57,7 +57,7 @@ class Game extends Phaser.Scene {
         //sound stuff
         this.bgm = this.sound.add('crowd', {
             mute: false,
-            volume: 0.75,
+            volume: 0.3,
             rate: 1.0,
             loop: true,
 
@@ -65,7 +65,7 @@ class Game extends Phaser.Scene {
 
         this.hitEffect = this.sound.add('cheer', {
             mute: false,
-            volume: 0.50,
+            volume: 0.1,
             rate: 1.0,
             loop: false,
         });
@@ -231,6 +231,13 @@ class Game extends Phaser.Scene {
             let storedScore = parseInt(localStorage.getItem('hiscore'));
             // newHighScore = true;
         }
+
+        this.gameOverScreen = this.sound.add('gameOver', {
+            mute: false,
+            volume: 1.0,
+            rate: 1.0,
+            loop: true,
+        });
     }
 
     update () {
@@ -254,6 +261,12 @@ class Game extends Phaser.Scene {
                 this.physics.world.collide(this.player.projectile, this.obstacleGroup, this.destroyObstacle, null, this);
             }
         } else {
+            console.log(toPlay);
+            if(toPlay == true) {
+                this.gameOverScreen.play();
+                toPlay = false;
+                console.log(`came into here ;)`);
+            }
             //SHOULD FIX, THAT SUCH THAT EVEN IF THE TRAVEL TO CENTER FAILS, INITIATE GAME-OVER SCREEN
             //This is code sends player to the center of the screen. The code is inefficient, not clean, and possibly prone to errors.
             if (this.player.x > centerX + 4 || this.player.x < centerX - 4) { //NOTE THE SCALAR MUST BE LESS THAN 2*MARGIN OF ERROR TO PREVENT INFINITE SLIDE
@@ -269,6 +282,7 @@ class Game extends Phaser.Scene {
                         this.restartGame();
                     }
                     if (keyJ.isDown) { //consider taking this outide of the else if chain so the user can skip the death screen.
+                        this.gameOverScreen.mute = true;
                         this.scene.restart();
                     }
                 }
