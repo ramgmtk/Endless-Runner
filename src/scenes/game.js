@@ -210,9 +210,9 @@ class Game extends Phaser.Scene {
         });
 
         //changes that happen on death do not need to be updated often
-        if (this.gameOver && (this.player.x > centerX + 4 || this.player.x < centerX - 4)) {
+        /*if (this.gameOver && (this.player.x > centerX + 4 || this.player.x < centerX - 4)) {
             this.background = this.add.tileSprite(0, uiSizeY, 1080, 720, 'foo').setOrigin(0, 0);
-        }
+        }*/
 
 
         // check for high score in local storage
@@ -261,12 +261,6 @@ class Game extends Phaser.Scene {
                 this.physics.world.collide(this.player.projectile, this.obstacleGroup, this.destroyObstacle, null, this);
             }
         } else {
-            console.log(toPlay);
-            if(toPlay == true) {
-                this.gameOverScreen.play();
-                toPlay = false;
-                console.log(`came into here ;)`);
-            }
             //SHOULD FIX, THAT SUCH THAT EVEN IF THE TRAVEL TO CENTER FAILS, INITIATE GAME-OVER SCREEN
             //This is code sends player to the center of the screen. The code is inefficient, not clean, and possibly prone to errors.
             if (this.player.x > centerX + 4 || this.player.x < centerX - 4) { //NOTE THE SCALAR MUST BE LESS THAN 2*MARGIN OF ERROR TO PREVENT INFINITE SLIDE
@@ -381,6 +375,7 @@ class Game extends Phaser.Scene {
         this.player.projectile.destroy();
         this.bgm.mute = true;
         this.hitEffect.mute = true;
+        this.gameOverScreen.play();
         this.time.removeAllEvents(); //clears the event calls
         this.obstacleGroup.runChildUpdate = false; //clear the obstacle group
         this.obstacleGroup.clear(true, true);

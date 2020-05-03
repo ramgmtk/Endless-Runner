@@ -51,7 +51,6 @@ let scale = 1.5;
 let scaleAdjust = 0.5;
 let spriteAtlasName = 'prototype_atlas';
 let mainAtlas = 'sprite_atlas';
-let toPlay = true;
 
 function factorial(n) {
     let k = n;
