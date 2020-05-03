@@ -63,6 +63,27 @@ class Game extends Phaser.Scene {
 
         });
 
+         this.gameOverScreen = this.sound.add('gameOver', {
+            mute: false,
+            volume: 0.5,
+            rate: 1.0,
+            loop: true,
+        });
+
+        this.playerHit = this.sound.add('groan', {
+            mute: false,
+            volume: 1.0,
+            rate: 1.0,
+            loop: false,
+        });
+
+        this.goodbyeJJ = this.sound.add('goodbye', {
+            mute: false,
+            volume: 1.0,
+            rate: 1.0,
+            loop: false,
+        });
+
         this.hitEffect = this.sound.add('cheer', {
             mute: false,
             volume: 0.1,
@@ -95,7 +116,7 @@ class Game extends Phaser.Scene {
             delay: 10000,
             callback : () => {
                 this.difficultyLevel++;
-                console.log("Difficulty increased");
+                //console.log("Difficulty increased");
                 this.playerCoolDown -= 50;
                 this.obstacleSpawn.delay -= 150;
             },
@@ -221,23 +242,16 @@ class Game extends Phaser.Scene {
             let storedScore = parseInt(localStorage.getItem('hiscore'));
             highScore = storedScore;
             this.timerCenterTopScore.text = `Away: ${highScore}`;
-            console.log(`storedScore: ${storedScore}`);
-            console.log(`highScore: ${highScore}`);
+            //console.log(`storedScore: ${storedScore}`);
+            //console.log(`highScore: ${highScore}`);
             // see if current score is higher than stored score
         } else {
-            console.log('No high score stored. Creating new.');
+            //console.log('No high score stored. Creating new.');
             highScore = 0;
             localStorage.setItem('hiscore', highScore.toString());
             let storedScore = parseInt(localStorage.getItem('hiscore'));
             // newHighScore = true;
         }
-
-        this.gameOverScreen = this.sound.add('gameOver', {
-            mute: false,
-            volume: 1.0,
-            rate: 1.0,
-            loop: true,
-        });
     }
 
     update () {
@@ -246,7 +260,7 @@ class Game extends Phaser.Scene {
             if(this.timeAlive > highScore) {
                 highScore = this.timeAlive;
                 this.timerCenterTopScore.text = `Away: ${highScore}`;
-                console.log('Updating High Score');
+                //console.log('Updating High Score');
             }
 
             this.background.tilePositionX += 8.0;
@@ -285,13 +299,13 @@ class Game extends Phaser.Scene {
                 //console.log(`New high score: ${level}`);
                 localStorage.setItem('hiscore', this.timeAlive.toString());
                 highScore = this.timeAlive;
-                console.log(`New High Score!`);
-                console.log(highScore);
+                //console.log(`New High Score!`);
+                //console.log(highScore);
                 // newHighScore = true;
             } else {
-                console.log('No new high score :/');
+                //console.log('No new high score :/');
                 highScore = parseInt(localStorage.getItem('hiscore'));
-                console.log(`highScore: ${highScore}`);
+                //console.log(`highScore: ${highScore}`);
                 // newHighScore = false;
             }
         }
@@ -372,6 +386,7 @@ class Game extends Phaser.Scene {
     //should delete objects from obstacle group
     destroyPlayer() {
         this.gameOver = true;
+        this.playerHit.play();
         this.player.projectile.destroy();
         this.bgm.mute = true;
         this.hitEffect.mute = true;
@@ -393,6 +408,14 @@ class Game extends Phaser.Scene {
         this.playerSlope.x = this.playerSlope.x / magnitude;
         this.playerSlope.y = this.playerSlope.y / magnitude;
         this.player.anims.play('OH NO')
+        this.time.addEvent({
+            delay: 5000,
+            callback: () => {
+                this.goodbyeJJ.play();
+            },
+            callbackScope: this,
+            repeat: 0,
+        });
     }
 
     restartGame() {

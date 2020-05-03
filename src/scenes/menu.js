@@ -21,6 +21,8 @@ class Menu extends Phaser.Scene {
         this.load.audio('crowd', 'crowd.wav');
         this.load.audio('title', 'TitleScreen.wav');
         this.load.audio('gameOver', 'gameOver.wav');
+        this.load.audio('goodbye', 'GB_Jojo.wav');
+        this.load.audio('groan', 'Groan.wav');
     }
 
     create(){

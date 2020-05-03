@@ -35,7 +35,7 @@ class Projectile extends Phaser.Physics.Arcade.Sprite {
             delay: this.scene.playerCoolDown,
             callback: () => {
                 this.player.isFiring = false;
-                console.log('executed firing callback');
+                //console.log('executed firing callback');
             },
             callbackScope: this.scene,
         });
