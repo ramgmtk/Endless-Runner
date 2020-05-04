@@ -26,7 +26,11 @@ class Game extends Phaser.Scene {
 
         // set up how to draw timer
         this.timeAlive = 0;
+        this.timerCenterOuterOuter = this.add.text(320 , 41 , `${this.timeAlive}` , scoreConfigOuterOuter).setOrigin(.5).setDepth(1);
+        this.timerCenterOuter = this.add.text(320 , 40 , `${this.timeAlive}` , scoreConfigOuter).setOrigin(.5).setDepth(1);
         this.timerCenter = this.add.text(320 , 40 , `${this.timeAlive}` , scoreConfig).setOrigin(.5).setDepth(1);
+        this.timerCenterTopScoreOuterOuter = this.add.text(centerX + 380, 41 , `${highScore}` , scoreConfigOuterOuter).setOrigin(.5).setDepth(1);
+        this.timerCenterTopScoreOuter = this.add.text(centerX + 380, 40 , `${highScore}` , scoreConfigOuter).setOrigin(.5).setDepth(1);
         this.timerCenterTopScore = this.add.text(centerX + 380, 40 , `${highScore}` , scoreConfig).setOrigin(.5).setDepth(1);
         this.add.tileSprite(240 , 40 , 105 , 24 , 'score').setOrigin(.5).setDepth(1);
         this.add.tileSprite(centerX + 200 , 40 , 286 , 24 , 'localHighScore').setOrigin(.5).setDepth(1);
@@ -243,6 +247,8 @@ class Game extends Phaser.Scene {
         if(localStorage.getItem('hiscore') != null) {
             let storedScore = parseInt(localStorage.getItem('hiscore'));
             highScore = storedScore;
+            this.timerCenterTopScoreOuterOuter.text = `${highScore}`;
+            this.timerCenterTopScoreOuter.text = `${highScore}`;
             this.timerCenterTopScore.text = `${highScore}`;
             //console.log(`storedScore: ${storedScore}`);
             //console.log(`highScore: ${highScore}`);
@@ -261,6 +267,8 @@ class Game extends Phaser.Scene {
             //update high score
             if(this.timeAlive > highScore) {
                 highScore = this.timeAlive;
+                this.timerCenterTopScoreOuterOuter.text = `${highScore}`;
+                this.timerCenterTopScoreOuter.text = `${highScore}`;
                 this.timerCenterTopScore.text = `${highScore}`;
                 //console.log('Updating High Score');
             }
@@ -431,5 +439,7 @@ class Game extends Phaser.Scene {
 
 function lifeTimer() {
     ++this.timeAlive;
+    this.timerCenterOuterOuter.text = `${this.timeAlive}`;
+    this.timerCenterOuter.text = `${this.timeAlive}`;
     this.timerCenter.text = `${this.timeAlive}`;
 }

@@ -20,8 +20,34 @@ let config = {
 
 // place holder text config, we can change this but i'm using it for score lol
 let scoreConfig = {
-    fontFamily: 'Courier' ,
+    fontFamily: 'Arial' ,
     fontSize: '28px' ,
+    // backgroundColor: '#c70000' ,
+    color: '#c70000' ,
+    align: 'right' ,
+    padding: {
+        top: 5 ,
+        botom: 5 ,
+    },
+    fixedWidth: 0
+}
+
+let scoreConfigOuter = {
+    fontFamily: 'Arial' ,
+    fontSize: '32px' ,
+    // backgroundColor: '#c70000' ,
+    color: '#ffffff' ,
+    align: 'right' ,
+    padding: {
+        top: 5 ,
+        botom: 5 ,
+    },
+    fixedWidth: 0
+}
+
+let scoreConfigOuterOuter = {
+    fontFamily: 'Arial' ,
+    fontSize: '37px' ,
     // backgroundColor: '#c70000' ,
     color: '#c70000' ,
     align: 'right' ,
